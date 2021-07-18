@@ -123,7 +123,7 @@ GitkutMenu.Wrapper = styled.header<{
         padding: 10px 16px;
         position: relative;
         text-decoration: none;
-        &:after {
+        &:not([href="/"]):after {
           content: " ";
           background-color: #5292c1;
           display: block;
