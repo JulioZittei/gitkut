@@ -3,8 +3,9 @@ import { Box } from "../components/Box"
 import { MainGrid } from "../components/MainGrid"
 import { ProfileRelationsBoxWrapper } from "../components/ProfileRelations"
 import { ProfileSidebar } from "../components/ProfileSidebar"
-import { GitkutMenu } from "../lib/GitKutCommoms"
-import { OrkutNostalgicIconSet } from "../lib/GitKutCommoms"
+import { GitkutMenu } from "../components/GitKutMenu"
+import { OrkutNostalgicIconSet } from "../components/OrkutNostalgicIconSet"
+import { Link } from "../components/Link"
 
 export default function Home() {
   const githubUser = "juliozittei"
@@ -48,13 +49,13 @@ export default function Home() {
               {friends.map((friend) => {
                 return (
                   <li key={friend.login}>
-                    <a href={`/users/${friend.login}`}>
+                    <Link href={`/users/${friend.login}`}>
                       <img
                         src={`https://github.com/${friend.login}.png`}
                         alt={friend.login}
                       />
                       <span>{friend.login}</span>
-                    </a>
+                    </Link>
                   </li>
                 )
               })}
