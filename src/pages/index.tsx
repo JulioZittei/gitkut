@@ -6,7 +6,7 @@ import { ProfileSidebar } from "../components/ProfileSidebar"
 import { GitkutMenu } from "../components/GitKutMenu"
 import { OrkutNostalgicIconSet } from "../components/OrkutNostalgicIconSet"
 import { Link } from "../components/Link"
-import Head from "next/Head"
+import Head from "next/head"
 
 export default function Home() {
   const githubUser = "juliozittei"
