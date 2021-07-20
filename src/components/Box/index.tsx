@@ -29,6 +29,7 @@ export const Box = styled.section`
     color: #333333;
     margin-bottom: 20px;
   }
+
   hr {
     margin-top: 12px;
     margin-bottom: 8px;
@@ -54,5 +55,9 @@ export const Box = styled.section`
     color: #ffffff;
     border-radius: 10000px;
     background-color: #6f92bb;
+  }
+
+  blockquote > q {
+    color: #898989;
   }
 `

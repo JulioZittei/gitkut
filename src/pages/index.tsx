@@ -66,7 +66,9 @@ export default function Home() {
         <div className="welcomeArea" style={{ gridArea: "welcomeArea" }}>
           <Box>
             <h1 className="title">Bem-vindo(a)</h1>
-
+            <blockquote cite={`https://github.com/${userInfo.login}`}>
+              <q>{userInfo.bio}</q>
+            </blockquote>
             <OrkutNostalgicIconSet />
           </Box>
 
