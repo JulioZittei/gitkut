@@ -5,7 +5,7 @@ import { Link } from "../Link"
 // ================================================================================================================
 // Menu
 // ================================================================================================================
-export function GitkutMenu({ githubUser }) {
+export function GitkutMenu({ userInfo }) {
   const [isMenuOpen, setMenuState] = useState(false)
   return (
     <GitkutMenu.Wrapper isMenuOpen={isMenuOpen}>
@@ -39,7 +39,7 @@ export function GitkutMenu({ githubUser }) {
           {!isMenuOpen && <img src="icons/menu-closed.svg" />}
         </button>
       </div>
-      <GitkutMenuProfileSidebar githubUser={githubUser} />
+      <GitkutMenuProfileSidebar githubUser={userInfo?.login} />
     </GitkutMenu.Wrapper>
   )
 }

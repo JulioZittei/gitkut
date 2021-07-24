@@ -1,56 +1,69 @@
-import { FormEvent, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { Box } from "../components/Box"
 import { MainGrid } from "../components/MainGrid"
-import { ProfileRelationsBoxWrapper } from "../components/ProfileRelations"
+import { ProfileRelationsBox } from "../components/ProfileRelationsBox"
 import { ProfileSidebar } from "../components/ProfileSidebar"
 import { GitkutMenu } from "../components/GitKutMenu"
 import { OrkutNostalgicIconSet } from "../components/OrkutNostalgicIconSet"
-import { Link } from "../components/Link"
+import {
+  getFollowers,
+  getFollowing,
+  getUserInfo,
+  transformData,
+  slugfy,
+} from "../utils/GitKutUtils"
 import Head from "next/head"
 
-export default function Home() {
+export async function getServerSideProps(context) {
   const githubUser = "juliozittei"
-  const [userInfo, setUserInfo] = useState<any>({})
-  const [following, setFollowing] = useState([])
-  const [followers, setFollowers] = useState([])
+  const data = await Promise.all([
+    getFollowers(githubUser),
+    getFollowing(githubUser),
+    getUserInfo(githubUser),
+  ])
+    .then((results) => {
+      return {
+        followers: transformData(results[0] || []),
+        following: transformData(results[1] || []),
+        userInfo: results[2],
+      }
+    })
+    .catch((error) => {
+      console.log("Error message:", error.message)
+    })
+
+  if (!data) {
+    return {
+      notFound: true,
+    }
+  }
+
+  return {
+    props: { data }, // will be passed to the page component as props
+  }
+}
+
+export default function Home(props) {
+  const { data } = props
+  const [userInfo, setUserInfo] = useState(data?.userInfo)
+  const [following, setFollowing] = useState(data?.following || [])
+  const [followers, setFollowers] = useState(data?.followers || [])
   const [communities, setCommunities] = useState([])
-
-  async function getUserInfo() {
-    const response = await fetch(`https://api.github.com/users/${githubUser}`)
-    const data = await response.json()
-    setUserInfo(data)
-  }
-
-  async function getFollowers() {
-    const response = await fetch(
-      `https://api.github.com/users/${githubUser}/followers?per_page=6`
-    )
-    const data = await response.json()
-    setFollowers(data)
-  }
-
-  async function getFollowing() {
-    const response = await fetch(
-      `https://api.github.com/users/${githubUser}/following?per_page=6`
-    )
-    const data = await response.json()
-    setFollowing(data)
-  }
 
   function handleCreateCommunity(event) {
     event.preventDefault()
     const formData = new FormData(event.target)
+    const desc = formData.get("name")
+    const imageUrl = formData.get("imageUrl")
+    const urlLink = formData.get("name").toString()
     const community = {
-      name: formData.get("name"),
-      imageUrl: formData.get("imageUrl"),
+      desc,
+      imageUrl,
+      urlLink: `/comunidades/${slugfy(urlLink)}`,
     }
     setCommunities([...communities, community])
     event.target.reset()
   }
-
-  useEffect(() => {
-    Promise.all([getFollowers(), getFollowing(), getUserInfo()])
-  }, [])
 
   return (
     <>
@@ -58,7 +71,7 @@ export default function Home() {
         <title>GitKut | A rede social baseada no GitHub</title>
       </Head>
 
-      <GitkutMenu githubUser={githubUser} />
+      <GitkutMenu userInfo={userInfo} />
       <MainGrid>
         <div className="profileArea" style={{ gridArea: "profileArea" }}>
           <ProfileSidebar userInfo={userInfo} />
@@ -66,7 +79,9 @@ export default function Home() {
         <div className="welcomeArea" style={{ gridArea: "welcomeArea" }}>
           <Box>
             <h1 className="title">Bem-vindo(a)</h1>
-
+            <blockquote cite={`https://github.com/${userInfo?.login}`}>
+              <q>{userInfo?.bio}</q>
+            </blockquote>
             <OrkutNostalgicIconSet />
           </Box>
 
@@ -94,65 +109,23 @@ export default function Home() {
           className="profileRelationsArea"
           style={{ gridArea: "profileRelationsArea" }}
         >
-          <ProfileRelationsBoxWrapper>
-            <h2 className="smallTitle">
-              Seguidores <span>({userInfo.followers})</span>
-            </h2>
-            <ul>
-              {followers.map((follower) => {
-                return (
-                  <li key={follower.login}>
-                    <Link href={`/users/${follower.login}`}>
-                      <img
-                        src={`https://github.com/${follower.login}.png`}
-                        alt={follower.login}
-                      />
-                      <span>{follower.login}</span>
-                    </Link>
-                  </li>
-                )
-              })}
-            </ul>
-          </ProfileRelationsBoxWrapper>
+          <ProfileRelationsBox
+            title="Seguidores"
+            totalItems={userInfo?.followers}
+            items={followers}
+          />
 
-          <ProfileRelationsBoxWrapper>
-            <h2 className="smallTitle">
-              Seguindo <span>({userInfo.following})</span>
-            </h2>
-            <ul>
-              {following.map((followed) => {
-                return (
-                  <li key={followed.login}>
-                    <Link href={`/users/${followed.login}`}>
-                      <img
-                        src={`https://github.com/${followed.login}.png`}
-                        alt={followed.login}
-                      />
-                      <span>{followed.login}</span>
-                    </Link>
-                  </li>
-                )
-              })}
-            </ul>
-          </ProfileRelationsBoxWrapper>
+          <ProfileRelationsBox
+            title="Seguindo"
+            totalItems={userInfo?.following}
+            items={following}
+          />
 
-          <ProfileRelationsBoxWrapper>
-            <h2 className="smallTitle">
-              Comunidades <span>({communities.length})</span>
-            </h2>
-            <ul>
-              {communities.map((community) => {
-                return (
-                  <li key={community.name}>
-                    <Link href={`/comunidades/${community.name}`}>
-                      <img src={`${community.imageUrl}`} alt={community.name} />
-                      <span>{community.name}</span>
-                    </Link>
-                  </li>
-                )
-              })}
-            </ul>
-          </ProfileRelationsBoxWrapper>
+          <ProfileRelationsBox
+            title="Comunidades"
+            totalItems={communities.length}
+            items={communities}
+          />
         </div>
       </MainGrid>
     </>

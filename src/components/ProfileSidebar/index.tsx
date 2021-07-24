@@ -6,20 +6,17 @@ type ProfileSidebarProps = {
   userInfo: any
 }
 
-export function ProfileSidebar(props: ProfileSidebarProps) {
+export function ProfileSidebar({ userInfo }: ProfileSidebarProps) {
   return (
     <Box as="aside">
       <img
-        src={`https://github.com/${props.userInfo.login}.png`}
-        alt={props.userInfo.login}
+        src={userInfo?.avatar_url}
+        alt={userInfo?.login}
         style={{ borderRadius: "8px" }}
       />
       <hr />
-      <Link
-        className="boxLink"
-        href={`https://github.com/${props.userInfo.login}`}
-      >
-        {props.userInfo.name}
+      <Link className="boxLink" href={`/`}>
+        {userInfo?.name}
       </Link>
       <hr />
 
