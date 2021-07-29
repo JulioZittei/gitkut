@@ -53,13 +53,48 @@ export default function Home({ data }) {
   const [followers, setFollowers] = useState(data?.followers || [])
   const [communities, setCommunities] = useState(data?.communities || [])
 
-  function handleCreateCommunity(event) {
+  async function handleCreateCommunity(event) {
     event.preventDefault()
-    const formData = new FormData(event.target)
-    const desc = formData.get("name")
-    const imageUrl = formData.get("imageUrl")
-    const urlLink = formData.get("name").toString()
 
+    const loading = document.querySelector(".loading")
+    loading.setAttribute("style", "display:flex;")
+
+    const formData = new FormData(event.target)
+    const community = {
+      title: formData.get("name"),
+      imageUrl: formData.get("imageUrl"),
+      creatorId: userInfo.login.toLocaleLowerCase(),
+    }
+
+    const createdCommunity = await fetch(
+      "http://localhost:3000/api/comunidades",
+      {
+        method: "POST",
+        body: JSON.stringify(community),
+      }
+    ).then((response) => {
+      if (response.ok) {
+        return response.json()
+      }
+
+      throw new Error(
+        `Request Error. Response error status code: ${response.status} status message: ${response.statusText} `
+      )
+    })
+
+    if (communities.data.length < 6) {
+      setCommunities({
+        data: [...communities.data, createdCommunity],
+        count: communities.count + 1,
+      })
+    } else {
+      setCommunities({
+        data: [...communities.data],
+        count: communities.count + 1,
+      })
+    }
+
+    loading.setAttribute("style", "display:none;")
     event.target.reset()
   }
 
@@ -90,12 +125,14 @@ export default function Home({ data }) {
                 name="name"
                 placeholder="Qual vai ser o nome da sua comunidade?"
                 aria-label="Qual vai ser o nome da sua comunidade?"
+                required
               />
               <input
                 type="text"
                 name="imageUrl"
                 placeholder="Coloque uma URL para usarmos de capa."
                 aria-label="Coloque uma URL para usarmos de capa."
+                required
               />
 
               <button type="submit">Criar comunidade</button>
@@ -146,6 +183,12 @@ export default function Home({ data }) {
           />
         </div>
       </MainGrid>
+      <div className="loading">
+        <img
+          src="https://media.giphy.com/media/XYoVdV12UXizl7bNvL/giphy.gif"
+          alt="Loading"
+        />
+      </div>
     </>
   )
 }

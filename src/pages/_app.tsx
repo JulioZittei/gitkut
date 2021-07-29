@@ -26,6 +26,21 @@ const GlobalStyle = createGlobalStyle`
     display: block;
   }
 
+  .loading {
+    position: absolute;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0, .5);
+    z-index: 999
+  }
+
+  .loading > img {
+    width: 50px;
+  }
+
   ${GitkutStyles}
 `
 
