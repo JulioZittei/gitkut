@@ -66,13 +66,10 @@ export default function Home({ data }) {
       creatorId: userInfo.login.toLocaleLowerCase(),
     }
 
-    const createdCommunity = await fetch(
-      "http://localhost:3000/api/comunidades",
-      {
-        method: "POST",
-        body: JSON.stringify(community),
-      }
-    ).then((response) => {
+    const createdCommunity = await fetch("/api/comunidades", {
+      method: "POST",
+      body: JSON.stringify(community),
+    }).then((response) => {
       if (response.ok) {
         return response.json()
       }
