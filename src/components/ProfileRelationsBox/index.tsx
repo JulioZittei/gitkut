@@ -1,16 +1,26 @@
+import { slugfy } from "../../utils/GitKutUtils"
 import { Link } from "../Link"
 import { ProfileRelationsBoxWrapper } from "../ProfileRelations"
 
 type ProfileRelationsBoxProps = {
   title: string
+  urlBase: string
   totalItems: number
   items: Array<any>
+  props: {
+    id: string
+    title: string
+    slug: string
+    imageUrl: string
+  }
 }
 
 export function ProfileRelationsBox({
   title,
+  urlBase,
   totalItems,
   items,
+  props,
 }: ProfileRelationsBoxProps) {
   return (
     <ProfileRelationsBoxWrapper>
@@ -20,10 +30,10 @@ export function ProfileRelationsBox({
       <ul>
         {items.map((item) => {
           return (
-            <li key={item.desc}>
-              <Link href={item.urlLink}>
-                <img src={`${item.imageUrl}`} alt={item.desc} />
-                <span>{item.desc}</span>
+            <li key={item[props.id]}>
+              <Link href={`${urlBase}${item[props.slug]}`}>
+                <img src={`${item[props.imageUrl]}`} alt={item[props.title]} />
+                <span>{item[props.title]}</span>
               </Link>
             </li>
           )

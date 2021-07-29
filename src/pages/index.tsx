@@ -9,23 +9,27 @@ import {
   getFollowers,
   getFollowing,
   getUserInfo,
-  transformData,
-  slugfy,
+  getCommunities,
 } from "../utils/GitKutUtils"
 import Head from "next/head"
 
-export async function getServerSideProps(context) {
+export async function getStaticProps(context) {
   const githubUser = "juliozittei"
   const data = await Promise.all([
     getFollowers(githubUser),
     getFollowing(githubUser),
+    getCommunities(githubUser),
     getUserInfo(githubUser),
   ])
     .then((results) => {
       return {
-        followers: transformData(results[0] || []),
-        following: transformData(results[1] || []),
-        userInfo: results[2],
+        followers: results[0] || [],
+        following: results[1] || [],
+        communities: {
+          data: results[2].data.allCommunities || [],
+          count: results[2].data._allCommunitiesMeta.count,
+        },
+        userInfo: results[3],
       }
     })
     .catch((error) => {
@@ -43,12 +47,11 @@ export async function getServerSideProps(context) {
   }
 }
 
-export default function Home(props) {
-  const { data } = props
+export default function Home({ data }) {
   const [userInfo, setUserInfo] = useState(data?.userInfo)
   const [following, setFollowing] = useState(data?.following || [])
   const [followers, setFollowers] = useState(data?.followers || [])
-  const [communities, setCommunities] = useState([])
+  const [communities, setCommunities] = useState(data?.communities || [])
 
   function handleCreateCommunity(event) {
     event.preventDefault()
@@ -56,12 +59,7 @@ export default function Home(props) {
     const desc = formData.get("name")
     const imageUrl = formData.get("imageUrl")
     const urlLink = formData.get("name").toString()
-    const community = {
-      desc,
-      imageUrl,
-      urlLink: `/comunidades/${slugfy(urlLink)}`,
-    }
-    setCommunities([...communities, community])
+
     event.target.reset()
   }
 
@@ -111,20 +109,41 @@ export default function Home(props) {
         >
           <ProfileRelationsBox
             title="Seguidores"
+            urlBase="/usuarios/"
             totalItems={userInfo?.followers}
             items={followers}
+            props={{
+              id: "id",
+              title: "login",
+              slug: "login",
+              imageUrl: "avatar_url",
+            }}
           />
 
           <ProfileRelationsBox
             title="Seguindo"
+            urlBase="/usuarios/"
             totalItems={userInfo?.following}
             items={following}
+            props={{
+              id: "id",
+              title: "login",
+              slug: "login",
+              imageUrl: "avatar_url",
+            }}
           />
 
           <ProfileRelationsBox
             title="Comunidades"
-            totalItems={communities.length}
-            items={communities}
+            urlBase="/comunidades/"
+            totalItems={communities.count}
+            items={communities.data}
+            props={{
+              id: "id",
+              title: "title",
+              slug: "slug",
+              imageUrl: "imageUrl",
+            }}
           />
         </div>
       </MainGrid>

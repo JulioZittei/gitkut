@@ -44,16 +44,49 @@ export async function getFollowing(githubUser) {
   return data
 }
 
-export function transformData(items) {
-  const result = items.map((value) => {
-    return {
-      desc: value.login,
-      urlLink: `/users/${value.login}`,
-      imageUrl: `${value.avatar_url}`,
+export async function getCommunities(githubuser) {
+  const data = await fetch(`https://graphql.datocms.com/`, {
+    method: "POST",
+    headers: {
+      Authorization: process.env.DATO_READ_ONLY_API_TOKEN,
+      "Content-Type": "aplication/json",
+      Accept: "aplication/json",
+    },
+    body: JSON.stringify({
+      query: `query {
+	
+        allCommunities(
+          filter: {
+            creatorId: {eq: "${githubuser}"}
+          }
+          first: 6
+        ){
+          id
+          title
+          imageUrl
+          slug
+        }
+        
+        _allCommunitiesMeta(
+          filter: {
+            creatorId: {eq: "${githubuser}"}
+          }
+        ) {
+          count
+        }
+      
+      }`,
+    }),
+  }).then((response) => {
+    if (response.ok) {
+      return response.json()
     }
-  })
 
-  return result
+    throw new Error(
+      `Request Error. Response error status code: ${response.status} status message: ${response.statusText} `
+    )
+  })
+  return data
 }
 
 export function slugfy(data: string) {
