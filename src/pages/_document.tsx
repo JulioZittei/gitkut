@@ -1,30 +1,18 @@
-import Document from "next/document"
-import { ServerStyleSheet } from "styled-components"
+import Document, { Html, Head, Main, NextScript } from "next/document"
 
 export default class MyDocument extends Document {
-  static async getInitialProps(ctx) {
-    const sheet = new ServerStyleSheet()
-    const originalRenderPage = ctx.renderPage
+  render() {
+    return (
+      <Html lang="pt-br">
+        <Head>
+          <link href="favicon.ico" rel="icon" type="image/x-icon" />
+        </Head>
 
-    try {
-      ctx.renderPage = () =>
-        originalRenderPage({
-          enhanceApp: (App) => (props) =>
-            sheet.collectStyles(<App {...props} />),
-        })
-
-      const initialProps = await Document.getInitialProps(ctx)
-      return {
-        ...initialProps,
-        styles: (
-          <>
-            {initialProps.styles}
-            {sheet.getStyleElement()}
-          </>
-        ),
-      }
-    } finally {
-      sheet.seal()
-    }
+        <body>
+          <Main />
+          <NextScript />
+        </body>
+      </Html>
+    )
   }
 }

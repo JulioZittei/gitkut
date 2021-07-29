@@ -35,8 +35,8 @@ export function GitkutMenu({ userInfo }) {
         </nav>
 
         <button onClick={() => setMenuState(!isMenuOpen)}>
-          {isMenuOpen && <img src="icons/menu-open.svg" />}
-          {!isMenuOpen && <img src="icons/menu-closed.svg" />}
+          {isMenuOpen && <img src="icons/menu-open.svg" alt="menu" />}
+          {!isMenuOpen && <img src="icons/menu-closed.svg" alt="close" />}
         </button>
       </div>
       <GitkutMenuProfileSidebar githubUser={userInfo?.login} />

@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
+import Head from "next/head"
 import { Box } from "../components/Box"
 import { MainGrid } from "../components/MainGrid"
 import { ProfileRelationsBox } from "../components/ProfileRelationsBox"
@@ -11,7 +12,6 @@ import {
   getUserInfo,
   getCommunities,
 } from "../utils/GitKutUtils"
-import Head from "next/head"
 
 export async function getStaticProps(context) {
   const githubUser = "juliozittei"
@@ -68,7 +68,6 @@ export default function Home({ data }) {
       <Head>
         <title>GitKut | A rede social baseada no GitHub</title>
       </Head>
-
       <GitkutMenu userInfo={userInfo} />
       <MainGrid>
         <div className="profileArea" style={{ gridArea: "profileArea" }}>
