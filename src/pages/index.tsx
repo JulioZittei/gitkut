@@ -1,5 +1,8 @@
-import { useState } from "react"
 import Head from "next/head"
+import nookies from "nookies"
+import jwt from "jsonwebtoken"
+import { useState } from "react"
+import { useRouter } from "next/dist/client/router"
 import { Box } from "../components/Box"
 import { MainGrid } from "../components/MainGrid"
 import { ProfileRelationsBox } from "../components/ProfileRelationsBox"
@@ -12,42 +15,9 @@ import {
   getUserInfo,
   getCommunities,
 } from "../utils/GitKutUtils"
+import { GetServerSideProps, NextPageContext } from "next"
 
-export async function getStaticProps(context) {
-  const githubUser = "juliozittei"
-  const data = await Promise.all([
-    getFollowers(githubUser),
-    getFollowing(githubUser),
-    getCommunities(githubUser),
-    getUserInfo(githubUser),
-  ])
-    .then((results) => {
-      return {
-        followers: results[0] || [],
-        following: results[1] || [],
-        communities: {
-          data: results[2].data.allCommunities || [],
-          count: results[2].data._allCommunitiesMeta.count,
-        },
-        userInfo: results[3],
-      }
-    })
-    .catch((error) => {
-      console.log("Error message:", error.message)
-    })
-
-  if (!data) {
-    return {
-      notFound: true,
-    }
-  }
-
-  return {
-    props: { data }, // will be passed to the page component as props
-  }
-}
-
-export default function Home({ data }) {
+export default function HomePage({ data }) {
   const [userInfo, setUserInfo] = useState(data?.userInfo)
   const [following, setFollowing] = useState(data?.following || [])
   const [followers, setFollowers] = useState(data?.followers || [])
@@ -98,7 +68,7 @@ export default function Home({ data }) {
   return (
     <>
       <Head>
-        <title>GitKut | A rede social baseada no GitHub</title>
+        <title>GitKut | {userInfo.name}</title>
       </Head>
       <GitkutMenu userInfo={userInfo} />
       <MainGrid>
@@ -108,9 +78,11 @@ export default function Home({ data }) {
         <div className="welcomeArea" style={{ gridArea: "welcomeArea" }}>
           <Box>
             <h1 className="title">Bem-vindo(a)</h1>
-            <blockquote cite={`https://github.com/${userInfo?.login}`}>
-              <q>{userInfo?.bio}</q>
-            </blockquote>
+            {userInfo.bio && userInfo.bio !== "" && (
+              <blockquote cite={`https://github.com/${userInfo?.login}`}>
+                <q>{userInfo?.bio}</q>
+              </blockquote>
+            )}
             <OrkutNostalgicIconSet />
           </Box>
 
@@ -188,4 +160,65 @@ export default function Home({ data }) {
       </div>
     </>
   )
+}
+
+export async function getServerSideProps(context: NextPageContext) {
+  const cookies = nookies.get(context)
+  const token = cookies.USER_TOKEN
+  const decodedToken = jwt.decode(token)
+  const githubUser = decodedToken?.githubUser
+
+  /* Api broken, the response is always true, even when the user does not exist */
+
+  const { isAuthenticated } = await fetch(
+    "https://alurakut.vercel.app/api/auth",
+    {
+      headers: {
+        Authorization: token,
+      },
+    }
+  ).then((response) => response.json())
+
+  if (!isAuthenticated) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    }
+  }
+
+  const data = await Promise.all([
+    getFollowers(githubUser),
+    getFollowing(githubUser),
+    getCommunities(githubUser),
+    getUserInfo(githubUser),
+  ])
+    .then((results) => {
+      return {
+        followers: results[0] || [],
+        following: results[1] || [],
+        communities: {
+          data: results[2].data.allCommunities || [],
+          count: results[2].data._allCommunitiesMeta.count,
+        },
+        userInfo: results[3],
+      }
+    })
+    .catch((error) => {
+      console.log("RequestError caused by:", error.message)
+    })
+
+  if (!data) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    }
+  }
+
+  return {
+    props: { data }, // will be passed to the page component as props
+  }
 }

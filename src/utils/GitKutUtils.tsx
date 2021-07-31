@@ -5,9 +5,7 @@ export async function getUserInfo(githubUser) {
         return response.json()
       }
 
-      throw new Error(
-        `Request Error. Response status code: ${response.status} status message: ${response.statusText} `
-      )
+      throw new Error(`${response.status} ${response.statusText}`)
     }
   )
   return data
@@ -21,9 +19,7 @@ export async function getFollowers(githubUser) {
       return response.json()
     }
 
-    throw new Error(
-      `Request Error. Response error status code: ${response.status} status message: ${response.statusText} `
-    )
+    throw new Error(`${response.status} ${response.statusText}`)
   })
 
   return data
@@ -37,9 +33,7 @@ export async function getFollowing(githubUser) {
       return response.json()
     }
 
-    throw new Error(
-      `Request Error. Response error status code: ${response.status} status message: ${response.statusText} `
-    )
+    throw new Error(`${response.status} ${response.statusText}`)
   })
   return data
 }
@@ -82,9 +76,7 @@ export async function getCommunities(githubuser) {
       return response.json()
     }
 
-    throw new Error(
-      `Request Error. Response error status code: ${response.status} status message: ${response.statusText} `
-    )
+    throw new Error(`${response.status} ${response.statusText}`)
   })
   return data
 }
