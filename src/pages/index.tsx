@@ -77,7 +77,7 @@ export default function HomePage({ data }) {
         </div>
         <div className="welcomeArea" style={{ gridArea: "welcomeArea" }}>
           <Box>
-            <h1 className="title">Bem-vindo(a)</h1>
+            <h1 className="title">Bem-vindo(a) {userInfo.name}</h1>
             {userInfo.bio && userInfo.bio !== "" && (
               <blockquote cite={`https://github.com/${userInfo?.login}`}>
                 <q>{userInfo?.bio}</q>
