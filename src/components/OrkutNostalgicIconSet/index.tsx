@@ -28,7 +28,7 @@ export function OrkutNostalgicIconSet(props) {
             <img
               key={`orkut__icon_set__${slug}_img`}
               className="OrkutNostalgicIconSet__iconSample"
-              src={`icons/${icon}.svg`}
+              src={`/icons/${icon}.svg`}
             />
             {props[slug] ? props[slug] : 0}
           </span>
@@ -52,7 +52,7 @@ export function OrkutNostalgicIconSet(props) {
                 return (
                   <img
                     key={`orkut__icon_set__${slug}_img_${index}`}
-                    src={`icons/${icon}.svg`}
+                    src={`/icons/${icon}.svg`}
                     style={{
                       marginRight: "2px",
                       opacity: isHeartActive ? 1 : "0.5",

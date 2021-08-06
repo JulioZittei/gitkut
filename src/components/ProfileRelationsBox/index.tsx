@@ -39,6 +39,12 @@ export function ProfileRelationsBox({
           )
         })}
       </ul>
+
+      <hr />
+
+      <Link className="boxLink" href={`/${title.toLocaleLowerCase()}/`}>
+        Ver todos
+      </Link>
     </ProfileRelationsBoxWrapper>
   )
 }
