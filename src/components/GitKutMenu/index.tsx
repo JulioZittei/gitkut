@@ -1,5 +1,5 @@
 import { useState } from "react"
-import styled, { css } from "styled-components"
+import styled from "styled-components"
 import { Link } from "../Link"
 
 // ================================================================================================================
@@ -10,7 +10,7 @@ export function GitkutMenu({ userInfo }) {
   return (
     <GitkutMenu.Wrapper isMenuOpen={isMenuOpen}>
       <div className="container">
-        <GitkutMenu.Logo src="images/logo.png" alt="Logo do Gitkut" />
+        <GitkutMenu.Logo src="/images/logo.png" alt="Logo do Gitkut" />
 
         <nav style={{ flex: 1 }}>
           {[
@@ -35,8 +35,8 @@ export function GitkutMenu({ userInfo }) {
         </nav>
 
         <button onClick={() => setMenuState(!isMenuOpen)}>
-          {isMenuOpen && <img src="icons/menu-open.svg" alt="menu" />}
-          {!isMenuOpen && <img src="icons/menu-closed.svg" alt="close" />}
+          {isMenuOpen && <img src="/icons/menu-open.svg" alt="menu" />}
+          {!isMenuOpen && <img src="/icons/menu-closed.svg" alt="close" />}
         </button>
       </div>
       <GitkutMenuProfileSidebar githubUser={userInfo?.login} />
@@ -142,7 +142,7 @@ GitkutMenu.Wrapper = styled.header<{
       background: #5579a1;
       padding: 10px 42px;
       border: 0;
-      background-image: url("icons/search.svg");
+      background-image: url("/icons/search.svg");
       background-position: 15px center;
       background-repeat: no-repeat;
       border-radius: 1000px;
@@ -191,30 +191,30 @@ export function GitkutProfileSidebarMenuDefault() {
     <GitkutProfileSidebarMenuDefault.Wrapper>
       <nav>
         <a href="/">
-          <img src="icons/user.svg" />
+          <img src="/icons/user.svg" />
           Perfil
         </a>
         <a href="/">
-          <img src="icons/book.svg" />
+          <img src="/icons/book.svg" />
           Recados
         </a>
         <a href="/">
-          <img src="icons/camera.svg" />
+          <img src="/icons/camera.svg" />
           Fotos
         </a>
         <a href="/">
-          <img src="icons/sun.svg" />
+          <img src="/icons/sun.svg" />
           Depoimentos
         </a>
       </nav>
       <hr />
       <nav>
         <a href="/">
-          <img src="icons/plus.svg" />
+          <img src="/icons/plus.svg" />
           GitHub Trends
         </a>
         <a href="/logout">
-          <img src="icons/logout.svg" />
+          <img src="/icons/logout.svg" />
           Sair
         </a>
       </nav>
