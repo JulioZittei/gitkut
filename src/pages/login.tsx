@@ -6,6 +6,7 @@ import nookies from "nookies"
 export default function LoginPage() {
   const router = useRouter()
   const [githubUser, setGithubUser] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
 
   return (
     <>
@@ -43,6 +44,7 @@ export default function LoginPage() {
               className="box"
               onSubmit={(e) => {
                 e.preventDefault()
+                setIsLoading(true)
                 fetch("https://alurakut.vercel.app/api/login", {
                   method: "POST",
                   headers: {
@@ -56,7 +58,8 @@ export default function LoginPage() {
                     path: "/",
                     maxAge: 86400 * 7,
                   })
-                  router.push("/", undefined, { shallow: true })
+                  setIsLoading(false)
+                  router.push("/")
                 })
               }}
             >
@@ -68,11 +71,38 @@ export default function LoginPage() {
                 required
                 value={githubUser}
                 onChange={(e) => {
-                  setGithubUser(e.target.value)
+                  setGithubUser(e.target.value.trim().toLocaleLowerCase())
                 }}
               />
 
-              <button type="submit">Login</button>
+              {router.query?.userDoesNotExists === "" && (
+                <span
+                  style={{
+                    fontSize: "13px",
+                    color: "red",
+                    marginBottom: "12px",
+                  }}
+                >
+                  Usuário não existe! Tente novamente.
+                </span>
+              )}
+
+              {router.query?.rateLimit === "" && (
+                <span
+                  style={{
+                    fontSize: "13px",
+                    color: "red",
+                    marginBottom: "12px",
+                  }}
+                >
+                  Você atingiu o limite de tentativas! Tente novamente mais
+                  tarde.
+                </span>
+              )}
+
+              <button type="submit" disabled={isLoading ? true : false}>
+                {isLoading ? "Entrando..." : "Entrar"}
+              </button>
             </form>
 
             <footer className="box">

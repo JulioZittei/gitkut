@@ -2,7 +2,6 @@ import Head from "next/head"
 import nookies from "nookies"
 import jwt from "jsonwebtoken"
 import { useState } from "react"
-import { useRouter } from "next/dist/client/router"
 import { Box } from "../components/Box"
 import { MainGrid } from "../components/MainGrid"
 import { ProfileRelationsBox } from "../components/ProfileRelationsBox"
@@ -15,17 +14,17 @@ import {
   getUserInfo,
   getCommunities,
 } from "../utils/GitKutUtils"
-import { GetServerSideProps, NextPageContext } from "next"
+import { GetServerSideProps, GetServerSidePropsContext } from "next"
 
 export default function HomePage({ data }) {
-  const [userInfo, setUserInfo] = useState(data?.userInfo)
-  const [following, setFollowing] = useState(data?.following || [])
-  const [followers, setFollowers] = useState(data?.followers || [])
-  const [communities, setCommunities] = useState(data?.communities || [])
+  const [userInfo, setUserInfo] = useState(data.userInfo)
+  const [following, setFollowing] = useState(data.following)
+  const [followers, setFollowers] = useState(data.followers)
+  const [communities, setCommunities] = useState(data?.communities)
 
   async function handleCreateCommunity(event) {
     event.preventDefault()
-
+    let createdCommunity = null
     const loading = document.querySelector(".loading")
     loading.setAttribute("style", "display:flex;")
 
@@ -36,18 +35,18 @@ export default function HomePage({ data }) {
       creatorId: userInfo.login.toLocaleLowerCase(),
     }
 
-    const createdCommunity = await fetch("/api/comunidades", {
-      method: "POST",
-      body: JSON.stringify(community),
-    }).then((response) => {
-      if (response.ok) {
-        return response.json()
-      }
-
-      throw new Error(
-        `Request Error. Response error status code: ${response.status} status message: ${response.statusText} `
-      )
-    })
+    try {
+      createdCommunity = await fetch("/api/comunidades", {
+        method: "POST",
+        body: JSON.stringify(community),
+      }).then((response) => {
+        if (response.ok) {
+          return response.json()
+        }
+      })
+    } catch (error) {
+      console.log(`${error.message}`)
+    }
 
     if (communities.data.length < 6) {
       setCommunities({
@@ -79,7 +78,7 @@ export default function HomePage({ data }) {
           <Box>
             <h1 className="title">Bem-vindo(a) {userInfo.name}</h1>
             {userInfo.bio && userInfo.bio !== "" && (
-              <blockquote cite={`https://github.com/${userInfo?.login}`}>
+              <blockquote cite={`https://github.com/${userInfo.login}`}>
                 <q>{userInfo?.bio}</q>
               </blockquote>
             )}
@@ -115,7 +114,7 @@ export default function HomePage({ data }) {
           <ProfileRelationsBox
             title="Seguidores"
             urlBase="/usuarios/"
-            totalItems={userInfo?.followers}
+            totalItems={userInfo.followers}
             items={followers}
             props={{
               id: "id",
@@ -128,7 +127,7 @@ export default function HomePage({ data }) {
           <ProfileRelationsBox
             title="Seguindo"
             urlBase="/usuarios/"
-            totalItems={userInfo?.following}
+            totalItems={userInfo.following}
             items={following}
             props={{
               id: "id",
@@ -162,7 +161,9 @@ export default function HomePage({ data }) {
   )
 }
 
-export async function getServerSideProps(context: NextPageContext) {
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
   const cookies = nookies.get(context)
   const token = cookies.USER_TOKEN
   const decodedToken = jwt.decode(token)
@@ -193,26 +194,34 @@ export async function getServerSideProps(context: NextPageContext) {
     getFollowing(githubUser),
     getCommunities(githubUser),
     getUserInfo(githubUser),
-  ])
-    .then((results) => {
+  ]).then((results) => {
+    if (results[3]?.statusError) {
       return {
-        followers: results[0] || [],
-        following: results[1] || [],
-        communities: {
-          data: results[2].data.allCommunities || [],
-          count: results[2].data._allCommunitiesMeta.count,
-        },
-        userInfo: results[3],
+        statusError: results[3].statusError,
       }
-    })
-    .catch((error) => {
-      console.log("RequestError caused by:", error.message)
-    })
+    }
+    return {
+      followers: results[0] || [],
+      following: results[1] || [],
+      communities: {
+        data: results[2].data.allCommunities || [],
+        count: results[2].data._allCommunitiesMeta.count,
+      },
+      userInfo: results[3],
+    }
+  })
 
-  if (!data) {
+  if (data?.statusError === 404) {
     return {
       redirect: {
-        destination: "/login",
+        destination: "/login?userDoesNotExists",
+        permanent: false,
+      },
+    }
+  } else if (data?.statusError === 403) {
+    return {
+      redirect: {
+        destination: "/login?rateLimit",
         permanent: false,
       },
     }
