@@ -5,7 +5,10 @@ export async function getUserInfo(githubUser) {
         return response.json()
       }
 
-      throw new Error(`${response.status} ${response.statusText}`)
+      console.log(`${response.status} ${response.statusText}`)
+      return {
+        statusError: response.status,
+      }
     }
   )
   return data
@@ -19,7 +22,10 @@ export async function getFollowers(githubUser) {
       return response.json()
     }
 
-    throw new Error(`${response.status} ${response.statusText}`)
+    console.log(`${response.status} ${response.statusText}`)
+    return {
+      statusError: response.status,
+    }
   })
 
   return data
@@ -33,7 +39,10 @@ export async function getFollowing(githubUser) {
       return response.json()
     }
 
-    throw new Error(`${response.status} ${response.statusText}`)
+    console.log(`${response.status} ${response.statusText}`)
+    return {
+      statusError: response.status,
+    }
   })
   return data
 }
@@ -51,7 +60,7 @@ export async function getCommunities(githubuser) {
 	
         allCommunities(
           filter: {
-            creatorId: {eq: "${githubuser}"}
+            creatorId: {eq: "${githubuser.toLowerCase()}"}
           }
           first: 6
         ){
@@ -63,7 +72,7 @@ export async function getCommunities(githubuser) {
         
         _allCommunitiesMeta(
           filter: {
-            creatorId: {eq: "${githubuser}"}
+            creatorId: {eq: "${githubuser.toLowerCase()}"}
           }
         ) {
           count
@@ -76,7 +85,10 @@ export async function getCommunities(githubuser) {
       return response.json()
     }
 
-    throw new Error(`${response.status} ${response.statusText}`)
+    console.log(`${response.status} ${response.statusText}`)
+    return {
+      statusError: response.status,
+    }
   })
   return data
 }
