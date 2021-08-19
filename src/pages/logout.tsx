@@ -1,7 +1,6 @@
 import { useRouter } from "next/dist/client/router"
 import { useEffect, useState } from "react"
 import nookies from "nookies"
-import { clearInterval } from "timers"
 
 export default function logoutPage(props) {
   const route = useRouter()
