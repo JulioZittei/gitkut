@@ -58,7 +58,6 @@ export default function LoginPage() {
                     path: "/",
                     maxAge: 86400 * 7,
                   })
-                  setIsLoading(false)
                   router.push("/")
                 })
               }}
@@ -100,7 +99,7 @@ export default function LoginPage() {
                 </span>
               )}
 
-              <button type="submit" disabled={isLoading ? true : false}>
+              <button type="submit" disabled={isLoading}>
                 {isLoading ? "Entrando..." : "Entrar"}
               </button>
             </form>
