@@ -1,31 +1,35 @@
 import Head from "next/head"
 import { useEffect, useState } from "react"
-import { Box } from "../../components/Box"
-import { MainGrid } from "../../components/MainGrid"
-import { ProfileRelationsBox } from "../../components/ProfileRelationsBox"
-import { ProfileSidebar } from "../../components/ProfileSidebar"
-import { GitkutMenu } from "../../components/GitKutMenu"
-import { InfoBox } from "../../components/InfoBox"
-import { OrkutNostalgicIconSet } from "../../components/OrkutNostalgicIconSet"
+import { Box } from "../components/Box"
+import { MainGrid } from "../components/MainGrid"
+import { ProfileRelationsBox } from "../components/ProfileRelationsBox"
+import { ProfileSidebar } from "../components/ProfileSidebar"
+import { GitkutMenu } from "../components/GitKutMenu"
+import { InfoBox } from "../components/InfoBox"
+import { OrkutNostalgicIconSet } from "../components/OrkutNostalgicIconSet"
 import {
   getFollowers,
   getFollowing,
   getUserInfo,
   getCommunities,
-} from "../../utils/GitKutUtils"
+  getPosts,
+} from "../utils/GitKutUtils"
 import { GetServerSideProps, GetServerSidePropsContext } from "next"
+import { Post } from "../components/Post"
 
 export default function UserPage({ data }) {
   const [userInfo, setUserInfo] = useState(data.userInfo)
   const [following, setFollowing] = useState(data.following)
   const [followers, setFollowers] = useState(data.followers)
   const [communities, setCommunities] = useState(data?.communities)
+  const [posts, setPosts] = useState(data.posts)
 
   useEffect(() => {
     setUserInfo(data.userInfo)
     setFollowers(data.followers)
     setFollowing(data.following)
     setCommunities(data.communities)
+    setPosts(data.posts)
   }, [data])
 
   return (
@@ -79,15 +83,35 @@ export default function UserPage({ data }) {
             </InfoBox>
           </Box>
 
-          <Box></Box>
+          {posts.length > 0 && (
+            <Box>
+              <h1 className="subTitle">Posts recentes</h1>
+              <ul>
+                {posts.map((post) => {
+                  return (
+                    <Post key={post.id}>
+                      <a>
+                        <img src={`https://github.com/${post.creatorId}.png`} />
+                      </a>
+                      <div>
+                        <span>{post.creatorId}</span>
+                        <p>{post.description}</p>
+                      </div>
+                    </Post>
+                  )
+                })}
+              </ul>
+            </Box>
+          )}
         </div>
         <div
           className="profileRelationsArea"
           style={{ gridArea: "profileRelationsArea" }}
         >
           <ProfileRelationsBox
+            githubUser={userInfo.login.toLowerCase()}
             title="Seguidores"
-            urlBase="/usuarios/"
+            urlBase=""
             totalItems={userInfo.followers}
             items={followers}
             props={{
@@ -99,8 +123,9 @@ export default function UserPage({ data }) {
           />
 
           <ProfileRelationsBox
+            githubUser={userInfo.login.toLowerCase()}
             title="Seguindo"
-            urlBase="/usuarios/"
+            urlBase=""
             totalItems={userInfo.following}
             items={following}
             props={{
@@ -112,8 +137,9 @@ export default function UserPage({ data }) {
           />
 
           <ProfileRelationsBox
+            githubUser={userInfo.login.toLowerCase()}
             title="Comunidades"
-            urlBase="/comunidades/"
+            urlBase="/communities"
             totalItems={communities.count}
             items={communities.data}
             props={{
@@ -132,17 +158,18 @@ export default function UserPage({ data }) {
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  const githubUser = context.query.slug as string
+  const githubUser = (context.query.slug as string).toLocaleLowerCase()
 
   const data = await Promise.all([
     getFollowers(githubUser),
     getFollowing(githubUser),
     getCommunities(githubUser),
+    getPosts(githubUser),
     getUserInfo(githubUser),
   ]).then((results) => {
-    if (results[3]?.statusError) {
+    if (results[4]?.statusError) {
       return {
-        statusError: results[3].statusError,
+        statusError: results[4].statusError,
       }
     }
     return {
@@ -152,7 +179,8 @@ export const getServerSideProps: GetServerSideProps = async (
         data: results[2].data.allCommunities || [],
         count: results[2].data._allCommunitiesMeta.count,
       },
-      userInfo: results[3],
+      posts: results[3].data.allPosts,
+      userInfo: results[4],
     }
   })
 
@@ -161,8 +189,6 @@ export const getServerSideProps: GetServerSideProps = async (
       notFound: true,
     }
   }
-
-  console.log(data)
 
   return {
     props: { data }, // will be passed to the page component as props

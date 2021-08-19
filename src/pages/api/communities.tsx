@@ -38,8 +38,10 @@ async function createCommunity(
   const createdCommunity = await client.items.create({
     itemType: "1026835",
     slug: slugfy(community.title),
+    member: JSON.stringify([community.creatorId]),
     ...community,
   })
+
   res.status(201).json(JSON.stringify(createdCommunity))
 }
 
