@@ -93,6 +93,40 @@ export async function getCommunities(githubuser) {
   return data
 }
 
+export async function getPosts(githubuser) {
+  const data = await fetch(`https://graphql.datocms.com/`, {
+    method: "POST",
+    headers: {
+      Authorization: process.env.DATO_READ_ONLY_API_TOKEN,
+      "Content-Type": "aplication/json",
+      Accept: "aplication/json",
+    },
+    body: JSON.stringify({
+      query: `query {
+	
+        allPosts(filter: {
+          creatorId: {eq: "${githubuser}"}
+        }
+        orderBy: [createdAt_DESC]) {
+          id
+          description
+          creatorId
+        }
+      }`,
+    }),
+  }).then((response) => {
+    if (response.ok) {
+      return response.json()
+    }
+
+    console.log(`${response.status} ${response.statusText}`)
+    return {
+      statusError: response.status,
+    }
+  })
+  return data
+}
+
 export function slugfy(data: string) {
   return data
     .toLowerCase()

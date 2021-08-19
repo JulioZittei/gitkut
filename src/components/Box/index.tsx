@@ -57,6 +57,54 @@ export const Box = styled.section`
     background-color: #6f92bb;
   }
 
+  textarea {
+    display: block;
+    width: 100%;
+    min-height: 86px;
+    background-color: #f4f4f4;
+    color: #333333;
+    border: 0;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    border-radius: 8px;
+    font-family: sans-serif;
+    font-size: 13.33px;
+    resize: vertical;
+    ::placeholder {
+      color: #333333;
+      opacity: 1;
+    }
+  }
+  .optionButtons {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .communityImg {
+    width: 128px;
+  }
+  .bio {
+    width: 100%;
+    display: block;
+    text-align: left;
+    color: #a5a5af;
+    border: 1px solid #e0e3ed;
+    padding: 8px;
+  }
+  .noCommunitiesMessage {
+    /* background-color: #fcfdde;
+    padding: 16px;
+    border-radius: 8px; */
+    font-size: 14px;
+    color: #333333;
+    text-align: justify;
+    span {
+      color: red;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  }
+
   blockquote > q {
     color: #898989;
   }

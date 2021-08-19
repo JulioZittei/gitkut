@@ -3,6 +3,7 @@ import { Link } from "../Link"
 import { ProfileRelationsBoxWrapper } from "../ProfileRelations"
 
 type ProfileRelationsBoxProps = {
+  githubUser: string
   title: string
   urlBase: string
   totalItems: number
@@ -16,6 +17,7 @@ type ProfileRelationsBoxProps = {
 }
 
 export function ProfileRelationsBox({
+  githubUser,
   title,
   urlBase,
   totalItems,
@@ -31,7 +33,17 @@ export function ProfileRelationsBox({
         {items.map((item) => {
           return (
             <li key={item[props.id]}>
-              <Link href={`${urlBase}${item[props.slug]}`}>
+              <Link
+                href={`${
+                  title.toLocaleLowerCase() == "comunidades"
+                    ? `/communities`
+                    : `/${item[props.slug]}`
+                }${
+                  title.toLocaleLowerCase() == "comunidades"
+                    ? `/${item[props.slug]}`
+                    : `${urlBase}`
+                }`}
+              >
                 <img src={`${item[props.imageUrl]}`} alt={item[props.title]} />
                 <span>{item[props.title]}</span>
               </Link>
@@ -42,9 +54,23 @@ export function ProfileRelationsBox({
 
       <hr />
 
-      <Link className="boxLink" href={`/${title.toLocaleLowerCase()}/`}>
-        Ver todos
-      </Link>
+      {title.toLocaleLowerCase() == "seguidores" && (
+        <Link className="boxLink" href={`/${githubUser}/followers`}>
+          Ver todos
+        </Link>
+      )}
+
+      {title.toLocaleLowerCase() == "seguindo" && (
+        <Link className="boxLink" href={`/${githubUser}/following`}>
+          Ver todos
+        </Link>
+      )}
+
+      {title.toLocaleLowerCase() == "comunidades" && (
+        <Link className="boxLink" href={`/${githubUser}/communities`}>
+          Ver todos
+        </Link>
+      )}
     </ProfileRelationsBoxWrapper>
   )
 }

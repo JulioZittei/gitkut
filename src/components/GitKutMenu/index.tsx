@@ -1,12 +1,14 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import styled from "styled-components"
 import { Link } from "../Link"
+import nookies from "nookies"
 
 // ================================================================================================================
 // Menu
 // ================================================================================================================
 export function GitkutMenu({ userInfo }) {
   const [isMenuOpen, setMenuState] = useState(false)
+
   return (
     <GitkutMenu.Wrapper isMenuOpen={isMenuOpen}>
       <div className="container">
@@ -14,9 +16,12 @@ export function GitkutMenu({ userInfo }) {
 
         <nav style={{ flex: 1 }}>
           {[
-            { name: "Inicio", slug: "/" },
-            { name: "Amigos", slug: "/amigos" },
-            { name: "Comunidades", slug: "/comunidades" },
+            { name: "Inicio", slug: `/` },
+            { name: "Amigos", slug: `${userInfo.login.toLowerCase()}/friends` },
+            {
+              name: "Comunidades",
+              slug: `${userInfo.login.toLowerCase()}/communities`,
+            },
           ].map((menuItem) => (
             <Link
               key={`key__${menuItem.name.toLocaleLowerCase()}`}
@@ -39,7 +44,7 @@ export function GitkutMenu({ userInfo }) {
           {!isMenuOpen && <img src="/icons/menu-closed.svg" alt="close" />}
         </button>
       </div>
-      <GitkutMenuProfileSidebar githubUser={userInfo?.login} />
+      <GitkutMenuProfileSidebar userInfo={userInfo} />
     </GitkutMenu.Wrapper>
   )
 }
@@ -161,18 +166,18 @@ GitkutMenu.Logo = styled.img`
   height: 34px;
 `
 
-function GitkutMenuProfileSidebar({ githubUser }) {
+function GitkutMenuProfileSidebar({ userInfo }) {
   return (
     <div className="GitkutMenuProfileSidebar">
       <div>
         <img
-          src={`https://github.com/${githubUser}.png`}
+          src={`https://github.com/${userInfo.login}.png`}
           style={{ borderRadius: "8px" }}
         />
         <hr />
         <p>
-          <a className="boxLink" href={`/user/${githubUser}`}>
-            @{githubUser}
+          <a className="boxLink" href={`/user/${userInfo.login}`}>
+            @{userInfo.login}
           </a>
         </p>
         <hr />
@@ -190,7 +195,7 @@ export function GitkutProfileSidebarMenuDefault() {
   return (
     <GitkutProfileSidebarMenuDefault.Wrapper>
       <nav>
-        <a href="/">
+        <a href={`/`}>
           <img src="/icons/user.svg" />
           Perfil
         </a>

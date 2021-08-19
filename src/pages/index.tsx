@@ -8,11 +8,13 @@ import { ProfileRelationsBox } from "../components/ProfileRelationsBox"
 import { ProfileSidebar } from "../components/ProfileSidebar"
 import { GitkutMenu } from "../components/GitKutMenu"
 import { OrkutNostalgicIconSet } from "../components/OrkutNostalgicIconSet"
+import { Post } from "../components/Post"
 import {
   getFollowers,
   getFollowing,
   getUserInfo,
   getCommunities,
+  getPosts,
 } from "../utils/GitKutUtils"
 import { GetServerSideProps, GetServerSidePropsContext } from "next"
 
@@ -20,23 +22,33 @@ export default function HomePage({ data }) {
   const [userInfo, setUserInfo] = useState(data.userInfo)
   const [following, setFollowing] = useState(data.following)
   const [followers, setFollowers] = useState(data.followers)
-  const [communities, setCommunities] = useState(data?.communities)
+  const [communities, setCommunities] = useState(data.communities)
+  const [posts, setPosts] = useState(data.posts)
+  const [formOption, setFormOption] = useState(0)
+
+  const [isCreatingCommunity, setIsCreatingCommunity] = useState(false)
+  const [isCreatingPost, setIsCreatingPost] = useState(false)
 
   async function handleCreateCommunity(event) {
     event.preventDefault()
     let createdCommunity = null
-    const loading = document.querySelector(".loading")
-    loading.setAttribute("style", "display:flex;")
+
+    setIsCreatingCommunity(true)
 
     const formData = new FormData(event.target)
     const community = {
       title: formData.get("name"),
       imageUrl: formData.get("imageUrl"),
       creatorId: userInfo.login.toLocaleLowerCase(),
+      category: "Pessoas",
+      communityType: "Pública",
+      language: "Português",
+      location: "Brasil",
+      member: JSON.stringify([userInfo.login.toLocaleLowerCase()]),
     }
 
     try {
-      createdCommunity = await fetch("/api/comunidades", {
+      createdCommunity = await fetch("/api/communities", {
         method: "POST",
         body: JSON.stringify(community),
       }).then((response) => {
@@ -50,7 +62,7 @@ export default function HomePage({ data }) {
 
     if (communities.data.length < 6) {
       setCommunities({
-        data: [...communities.data, createdCommunity],
+        data: [createdCommunity, ...communities.data],
         count: communities.count + 1,
       })
     } else {
@@ -60,7 +72,37 @@ export default function HomePage({ data }) {
       })
     }
 
-    loading.setAttribute("style", "display:none;")
+    setIsCreatingCommunity(false)
+    event.target.reset()
+  }
+
+  async function handleCreatePost(event) {
+    event.preventDefault()
+    let createdPost = null
+
+    setIsCreatingPost(true)
+
+    const formData = new FormData(event.target)
+    const post = {
+      description: formData.get("description"),
+      creatorId: userInfo.login.toLocaleLowerCase(),
+    }
+
+    try {
+      createdPost = await fetch("/api/posts", {
+        method: "POST",
+        body: JSON.stringify(post),
+      }).then((response) => {
+        if (response.ok) {
+          return response.json()
+        }
+      })
+    } catch (error) {
+      console.log(`${error.message}`)
+    }
+
+    setIsCreatingPost(false)
+    setPosts([createdPost, ...posts])
     event.target.reset()
   }
 
@@ -87,33 +129,83 @@ export default function HomePage({ data }) {
 
           <Box>
             <h2 className="subTitle">O que você deseja fazer?</h2>
-            <form onSubmit={handleCreateCommunity}>
-              <input
-                type="text"
-                name="name"
-                placeholder="Qual vai ser o nome da sua comunidade?"
-                aria-label="Qual vai ser o nome da sua comunidade?"
-                required
-              />
-              <input
-                type="text"
-                name="imageUrl"
-                placeholder="Coloque uma URL para usarmos de capa."
-                aria-label="Coloque uma URL para usarmos de capa."
-                required
-              />
 
-              <button type="submit">Criar comunidade</button>
-            </form>
+            <div className="optionButtons">
+              <button onClick={() => setFormOption(0)}>Criar comunidade</button>
+              <button onClick={() => setFormOption(1)}>Deixar um recado</button>
+            </div>
+
+            {formOption === 0 && (
+              <form onSubmit={handleCreateCommunity}>
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Qual vai ser o nome da sua comunidade?"
+                  aria-label="Qual vai ser o nome da sua comunidade?"
+                  required
+                />
+                <input
+                  type="text"
+                  name="imageUrl"
+                  placeholder="Coloque uma URL para usarmos de capa."
+                  aria-label="Coloque uma URL para usarmos de capa."
+                  required
+                />
+
+                <button type="submit" disabled={isCreatingCommunity}>
+                  {isCreatingCommunity ? "Criando..." : "Criar comunidade"}
+                </button>
+              </form>
+            )}
+
+            {formOption === 1 && (
+              <form onSubmit={handleCreatePost}>
+                <div>
+                  <textarea
+                    name="description"
+                    placeholder="Digite seu recado aqui..."
+                    aria-label="Digite seu recado aqui"
+                    autoComplete="off"
+                    required
+                  />
+                </div>
+
+                <button type="submit" disabled={isCreatingPost}>
+                  {isCreatingPost ? "Publicando..." : "Publicar"}
+                </button>
+              </form>
+            )}
           </Box>
+
+          {posts.length > 0 && (
+            <Box>
+              <h1 className="subTitle">Posts recentes</h1>
+              <ul>
+                {posts.map((post) => {
+                  return (
+                    <Post key={post.id}>
+                      <a>
+                        <img src={`https://github.com/${post.creatorId}.png`} />
+                      </a>
+                      <div>
+                        <span>{post.creatorId}</span>
+                        <p>{post.description}</p>
+                      </div>
+                    </Post>
+                  )
+                })}
+              </ul>
+            </Box>
+          )}
         </div>
         <div
           className="profileRelationsArea"
           style={{ gridArea: "profileRelationsArea" }}
         >
           <ProfileRelationsBox
+            githubUser={userInfo.login.toLowerCase()}
             title="Seguidores"
-            urlBase="/usuarios/"
+            urlBase=""
             totalItems={userInfo.followers}
             items={followers}
             props={{
@@ -125,8 +217,9 @@ export default function HomePage({ data }) {
           />
 
           <ProfileRelationsBox
+            githubUser={userInfo.login.toLowerCase()}
             title="Seguindo"
-            urlBase="/usuarios/"
+            urlBase=""
             totalItems={userInfo.following}
             items={following}
             props={{
@@ -138,8 +231,9 @@ export default function HomePage({ data }) {
           />
 
           <ProfileRelationsBox
+            githubUser={userInfo.login.toLowerCase()}
             title="Comunidades"
-            urlBase="/comunidades/"
+            urlBase="/communities"
             totalItems={communities.count}
             items={communities.data}
             props={{
@@ -151,12 +245,6 @@ export default function HomePage({ data }) {
           />
         </div>
       </MainGrid>
-      <div className="loading">
-        <img
-          src="https://media.giphy.com/media/XYoVdV12UXizl7bNvL/giphy.gif"
-          alt="Loading"
-        />
-      </div>
     </>
   )
 }
@@ -193,11 +281,12 @@ export const getServerSideProps: GetServerSideProps = async (
     getFollowers(githubUser),
     getFollowing(githubUser),
     getCommunities(githubUser),
+    getPosts(githubUser),
     getUserInfo(githubUser),
   ]).then((results) => {
-    if (results[3]?.statusError) {
+    if (results[4]?.statusError) {
       return {
-        statusError: results[3].statusError,
+        statusError: results[4].statusError,
       }
     }
     return {
@@ -207,7 +296,8 @@ export const getServerSideProps: GetServerSideProps = async (
         data: results[2].data.allCommunities || [],
         count: results[2].data._allCommunitiesMeta.count,
       },
-      userInfo: results[3],
+      posts: results[3].data.allPosts || [],
+      userInfo: results[4],
     }
   })
 
