@@ -25,11 +25,11 @@ export default function Communities({ data }) {
       </Head>
       <GitkutMenu userInfo={data.userInfo} />
       <MainGrid theme={theme}>
-        <div>
+        <div className="profileArea">
           <ProfileSidebar userInfo={data.userInfo} />
         </div>
 
-        <div>
+        <div className="welcomeArea">
           <Box>
             <h1 className="title subPageTitle">Comunidades</h1>
             <p className="pathSubtitle">
