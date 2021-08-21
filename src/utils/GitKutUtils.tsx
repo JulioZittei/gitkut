@@ -14,9 +14,9 @@ export async function getUserInfo(githubUser) {
   return data
 }
 
-export async function getFollowers(githubUser) {
+export async function getFollowers(githubUser: string, first?: number) {
   const data = await fetch(
-    `https://api.github.com/users/${githubUser}/followers?per_page=6`
+    `https://api.github.com/users/${githubUser}/followers?per_page=${first}`
   ).then((response) => {
     if (response.ok) {
       return response.json()
@@ -31,9 +31,9 @@ export async function getFollowers(githubUser) {
   return data
 }
 
-export async function getFollowing(githubUser) {
+export async function getFollowing(githubUser: string, first?: number) {
   const data = await fetch(
-    `https://api.github.com/users/${githubUser}/following?per_page=6`
+    `https://api.github.com/users/${githubUser}/following?per_page=${first}`
   ).then((response) => {
     if (response.ok) {
       return response.json()
@@ -47,7 +47,7 @@ export async function getFollowing(githubUser) {
   return data
 }
 
-export async function getCommunities(githubuser) {
+export async function getCommunities(githubuser?: string, first?: number) {
   const data = await fetch(`https://graphql.datocms.com/`, {
     method: "POST",
     headers: {
@@ -58,23 +58,49 @@ export async function getCommunities(githubuser) {
     body: JSON.stringify({
       query: `query {
 	
-        allCommunities(
-          filter: {
+        allCommunities
+        ${
+          githubuser || first
+            ? `(
+          ${
+            githubuser &&
+            `filter: {
             creatorId: {eq: "${githubuser.toLowerCase()}"}
+          }`
           }
-          first: 6
-        ){
+          ${first && `first: ${first}`}
+          
+        )`
+            : ``
+        }        
+        {
           id
           title
           imageUrl
           slug
+          _createdAt
+          category
+          communityType
+          language
+          location
+          member
+          creatorId
         }
         
-        _allCommunitiesMeta(
-          filter: {
+        _allCommunitiesMeta
+        ${
+          githubuser || first
+            ? `(
+          ${
+            githubuser &&
+            `filter: {
             creatorId: {eq: "${githubuser.toLowerCase()}"}
+          }`
           }
-        ) {
+        )`
+            : ``
+        }
+        {
           count
         }
       

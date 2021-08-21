@@ -8,7 +8,7 @@ export function OrkutNostalgicIconSet(props) {
   return (
     <OrkutNostalgicIconSet.List>
       {[
-        { name: "Recados", slug: "recados", icon: "book" },
+        { name: "Posts", slug: "posts", icon: "book" },
         { name: "Fotos", slug: "fotos", icon: "camera" },
         { name: "Videos", slug: "videos", icon: "video-camera" },
         { name: "Fãs", slug: "fas", icon: "star" },

@@ -17,10 +17,13 @@ export function GitkutMenu({ userInfo }) {
         <nav style={{ flex: 1 }}>
           {[
             { name: "Inicio", slug: `/` },
-            { name: "Amigos", slug: `${userInfo.login.toLowerCase()}/friends` },
+            {
+              name: "Amigos",
+              slug: `/${userInfo.login.toLowerCase()}/friends`,
+            },
             {
               name: "Comunidades",
-              slug: `${userInfo.login.toLowerCase()}/communities`,
+              slug: `/communities`,
             },
           ].map((menuItem) => (
             <Link
@@ -201,7 +204,7 @@ export function GitkutProfileSidebarMenuDefault() {
         </a>
         <a href="/">
           <img src="/icons/book.svg" />
-          Recados
+          Posts
         </a>
         <a href="/">
           <img src="/icons/camera.svg" />

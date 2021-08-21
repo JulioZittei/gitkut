@@ -8,6 +8,7 @@ import { ProfileRelationsBox } from "../components/ProfileRelationsBox"
 import { ProfileSidebar } from "../components/ProfileSidebar"
 import { GitkutMenu } from "../components/GitKutMenu"
 import { OrkutNostalgicIconSet } from "../components/OrkutNostalgicIconSet"
+import { InfoBox } from "../components/InfoBox"
 import { Post } from "../components/Post"
 import {
   getFollowers,
@@ -28,6 +29,10 @@ export default function HomePage({ data }) {
 
   const [isCreatingCommunity, setIsCreatingCommunity] = useState(false)
   const [isCreatingPost, setIsCreatingPost] = useState(false)
+
+  const theme = {
+    grid: 3,
+  }
 
   async function handleCreateCommunity(event) {
     event.preventDefault()
@@ -113,10 +118,10 @@ export default function HomePage({ data }) {
       </Head>
       <GitkutMenu userInfo={userInfo} />
       <MainGrid>
-        <div className="profileArea" style={{ gridArea: "profileArea" }}>
+        <div className="profileArea">
           <ProfileSidebar userInfo={userInfo} />
         </div>
-        <div className="welcomeArea" style={{ gridArea: "welcomeArea" }}>
+        <div className="welcomeArea">
           <Box>
             <h1 className="title">Bem-vindo(a) {userInfo.name}</h1>
             {userInfo.bio && userInfo.bio !== "" && (
@@ -124,7 +129,37 @@ export default function HomePage({ data }) {
                 <q>{userInfo?.bio}</q>
               </blockquote>
             )}
-            <OrkutNostalgicIconSet />
+            <OrkutNostalgicIconSet posts={posts.length} />
+            <InfoBox>
+              <tbody>
+                <tr>
+                  <td className="textOnCenter">Usuário no GitHub:</td>
+                  <td>{userInfo.login}</td>
+                </tr>
+                {userInfo.company && (
+                  <tr>
+                    <td className="textOnCenter">Empresa:</td>
+                    <td>{userInfo.company}</td>
+                  </tr>
+                )}
+                {userInfo.twitter_username && (
+                  <tr>
+                    <td className="textOnCenter">Twitter:</td>
+                    <td>{`@${userInfo.twitter_username}`}</td>
+                  </tr>
+                )}
+                {userInfo.location && (
+                  <tr>
+                    <td className="textOnCenter">Localização:</td>
+                    <td>{userInfo.location}</td>
+                  </tr>
+                )}
+                <tr>
+                  <td className="textOnCenter">Membro desde:</td>
+                  <td>{new Date(userInfo.created_at).toLocaleDateString()}</td>
+                </tr>
+              </tbody>
+            </InfoBox>
           </Box>
 
           <Box>
@@ -198,10 +233,7 @@ export default function HomePage({ data }) {
             </Box>
           )}
         </div>
-        <div
-          className="profileRelationsArea"
-          style={{ gridArea: "profileRelationsArea" }}
-        >
+        <div className="profileRelationsArea">
           <ProfileRelationsBox
             githubUser={userInfo.login.toLowerCase()}
             title="Seguidores"
@@ -278,9 +310,9 @@ export const getServerSideProps: GetServerSideProps = async (
   }
 
   const data = await Promise.all([
-    getFollowers(githubUser),
-    getFollowing(githubUser),
-    getCommunities(githubUser),
+    getFollowers(githubUser, 6),
+    getFollowing(githubUser, 6),
+    getCommunities(githubUser, 6),
     getPosts(githubUser),
     getUserInfo(githubUser),
   ]).then((results) => {

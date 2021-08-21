@@ -18,7 +18,11 @@ export const MainGrid = styled.main`
   @media (min-width: 860px) {
     max-width: 1110px;
     display: grid;
-    grid-template-areas: "profileArea welcomeArea profileRelationsArea";
-    grid-template-columns: 160px 1fr 312px;
+    grid-template-areas: ${(props) =>
+      props.theme?.grid === 2
+        ? ""
+        : "profileArea welcomeArea profileRelationsArea"};
+    grid-template-columns: ${(props) =>
+      props.theme?.grid === 2 ? "160px 1fr" : "160px 1fr 312px"};
   }
 `

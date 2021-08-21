@@ -59,6 +59,7 @@ export default function LoginPage() {
                     maxAge: 86400 * 7,
                   })
                   router.push("/")
+                  setIsLoading(false)
                 })
               }}
             >

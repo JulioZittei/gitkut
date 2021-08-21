@@ -1,21 +1,23 @@
 import Head from "next/head"
+import nookies from "nookies"
+import jwt from "jsonwebtoken"
 import { useEffect, useState } from "react"
-import { Box } from "../components/Box"
-import { MainGrid } from "../components/MainGrid"
-import { ProfileRelationsBox } from "../components/ProfileRelationsBox"
-import { ProfileSidebar } from "../components/ProfileSidebar"
-import { GitkutMenu } from "../components/GitKutMenu"
-import { InfoBox } from "../components/InfoBox"
-import { OrkutNostalgicIconSet } from "../components/OrkutNostalgicIconSet"
+import { Box } from "../../components/Box"
+import { MainGrid } from "../../components/MainGrid"
+import { ProfileRelationsBox } from "../../components/ProfileRelationsBox"
+import { ProfileSidebar } from "../../components/ProfileSidebar"
+import { GitkutMenu } from "../../components/GitKutMenu"
+import { InfoBox } from "../../components/InfoBox"
+import { OrkutNostalgicIconSet } from "../../components/OrkutNostalgicIconSet"
 import {
   getFollowers,
   getFollowing,
   getUserInfo,
   getCommunities,
   getPosts,
-} from "../utils/GitKutUtils"
+} from "../../utils/GitKutUtils"
 import { GetServerSideProps, GetServerSidePropsContext } from "next"
-import { Post } from "../components/Post"
+import { Post } from "../../components/Post"
 
 export default function UserPage({ data }) {
   const [userInfo, setUserInfo] = useState(data.userInfo)
@@ -23,6 +25,10 @@ export default function UserPage({ data }) {
   const [followers, setFollowers] = useState(data.followers)
   const [communities, setCommunities] = useState(data?.communities)
   const [posts, setPosts] = useState(data.posts)
+
+  const theme = {
+    grid: 3,
+  }
 
   useEffect(() => {
     setUserInfo(data.userInfo)
@@ -39,10 +45,10 @@ export default function UserPage({ data }) {
       </Head>
       <GitkutMenu userInfo={userInfo} />
       <MainGrid>
-        <div className="profileArea" style={{ gridArea: "profileArea" }}>
+        <div className="profileArea">
           <ProfileSidebar userInfo={userInfo} />
         </div>
-        <div className="welcomeArea" style={{ gridArea: "welcomeArea" }}>
+        <div className="welcomeArea">
           <Box>
             <h1 className="title">{userInfo.name}</h1>
             {userInfo.bio && userInfo.bio !== "" && (
@@ -50,7 +56,7 @@ export default function UserPage({ data }) {
                 <q>{userInfo?.bio}</q>
               </blockquote>
             )}
-            <OrkutNostalgicIconSet />
+            <OrkutNostalgicIconSet posts={posts.length} />
             <InfoBox>
               <tbody>
                 <tr>
@@ -104,10 +110,7 @@ export default function UserPage({ data }) {
             </Box>
           )}
         </div>
-        <div
-          className="profileRelationsArea"
-          style={{ gridArea: "profileRelationsArea" }}
-        >
+        <div className="profileRelationsArea">
           <ProfileRelationsBox
             githubUser={userInfo.login.toLowerCase()}
             title="Seguidores"
@@ -158,12 +161,34 @@ export default function UserPage({ data }) {
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  const githubUser = (context.query.slug as string).toLocaleLowerCase()
+  const cookies = nookies.get(context)
+  const token = cookies.USER_TOKEN
+  const githubUser = (context.query.user as string).toLocaleLowerCase()
+
+  /* Api broken, the response is always true, even when the user does not exist */
+
+  const { isAuthenticated } = await fetch(
+    "https://alurakut.vercel.app/api/auth",
+    {
+      headers: {
+        Authorization: token,
+      },
+    }
+  ).then((response) => response.json())
+
+  if (!isAuthenticated) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    }
+  }
 
   const data = await Promise.all([
-    getFollowers(githubUser),
-    getFollowing(githubUser),
-    getCommunities(githubUser),
+    getFollowers(githubUser, 6),
+    getFollowing(githubUser, 6),
+    getCommunities(githubUser, 6),
     getPosts(githubUser),
     getUserInfo(githubUser),
   ]).then((results) => {
@@ -184,9 +209,19 @@ export const getServerSideProps: GetServerSideProps = async (
     }
   })
 
-  if (data?.statusError === 404 || data?.statusError === 403) {
+  if (data?.statusError === 404) {
     return {
-      notFound: true,
+      redirect: {
+        destination: "/login?userDoesNotExists",
+        permanent: false,
+      },
+    }
+  } else if (data?.statusError === 403) {
+    return {
+      redirect: {
+        destination: "/login?rateLimit",
+        permanent: false,
+      },
     }
   }
 
