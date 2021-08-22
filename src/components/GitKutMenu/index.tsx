@@ -185,7 +185,12 @@ function GitkutMenuProfileSidebar({ userInfo }) {
         </p>
         <hr />
 
-        <GitkutProfileSidebarMenuDefault />
+        <GitkutProfileSidebarMenuDefault
+          isCommunityInfo={false}
+          handleJoinCommunity={undefined}
+          isMember={undefined}
+          isLoading={undefined}
+        />
       </div>
     </div>
   )
@@ -194,38 +199,60 @@ function GitkutMenuProfileSidebar({ userInfo }) {
 // ================================================================================================================
 // GitkutProfileSidebarMenuDefault
 // ================================================================================================================
-export function GitkutProfileSidebarMenuDefault() {
+export function GitkutProfileSidebarMenuDefault({
+  isCommunityInfo,
+  handleJoinCommunity,
+  isMember,
+  isLoading,
+}) {
   return (
     <GitkutProfileSidebarMenuDefault.Wrapper>
-      <nav>
-        <a href={`/`}>
-          <img src="/icons/user.svg" />
-          Perfil
-        </a>
-        <a href="/">
-          <img src="/icons/book.svg" />
-          Posts
-        </a>
-        <a href="/">
-          <img src="/icons/camera.svg" />
-          Fotos
-        </a>
-        <a href="/">
-          <img src="/icons/sun.svg" />
-          Depoimentos
-        </a>
-      </nav>
-      <hr />
-      <nav>
-        <a href="/">
-          <img src="/icons/plus.svg" />
-          GitHub Trends
-        </a>
-        <a href="/logout">
-          <img src="/icons/logout.svg" />
-          Sair
-        </a>
-      </nav>
+      {!isCommunityInfo ? (
+        <>
+          <nav>
+            <a href={`/`}>
+              <img src="/icons/user.svg" />
+              Perfil
+            </a>
+            <a href="/">
+              <img src="/icons/book.svg" />
+              Posts
+            </a>
+            <a href="/">
+              <img src="/icons/camera.svg" />
+              Fotos
+            </a>
+            <a href="/">
+              <img src="/icons/sun.svg" />
+              Depoimentos
+            </a>
+          </nav>
+          <hr />
+          <nav>
+            <a href="/">
+              <img src="/icons/plus.svg" />
+              GitHub Trends
+            </a>
+            <a href="/logout">
+              <img src="/icons/logout.svg" />
+              Sair
+            </a>
+          </nav>
+        </>
+      ) : (
+        <>
+          <nav>
+            <button
+              className="plusButton"
+              onClick={(e) => handleJoinCommunity(e)}
+              disabled={isLoading}
+            >
+              <img src={isMember ? `/icons/logout.svg` : `/icons/plus.svg`} />
+              {isMember ? "Deixar comunidade" : "Participar da comunidade"}
+            </button>
+          </nav>
+        </>
+      )}
     </GitkutProfileSidebarMenuDefault.Wrapper>
   )
 }
@@ -239,6 +266,28 @@ GitkutProfileSidebarMenuDefault.Wrapper = styled.div`
     justify-content: flex-start;
     text-decoration: none;
     img {
+      width: 16px;
+      height: 16px;
+      margin-right: 5px;
+    }
+  }
+
+  .plusButton {
+    background: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    text-align: left;
+    font-size: 12px;
+    color: #2e7bb4;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    &:disabled {
+      cursor: not-allowed;
+    }
+    img {
+      display: inline;
       width: 16px;
       height: 16px;
       margin-right: 5px;

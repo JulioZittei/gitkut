@@ -30,6 +30,15 @@ export const Box = styled.section`
     margin-bottom: 20px;
   }
 
+  .pathSubtitle {
+    font-size: 12px;
+    color: #6f92bb;
+    span {
+      font-size: 12px;
+      color: #333333;
+    }
+  }
+
   hr {
     margin-top: 12px;
     margin-bottom: 8px;

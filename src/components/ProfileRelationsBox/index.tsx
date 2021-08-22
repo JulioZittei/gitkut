@@ -71,6 +71,12 @@ export function ProfileRelationsBox({
           Ver todos
         </Link>
       )}
+
+      {title.toLocaleLowerCase() == "membros" && (
+        <Link className="boxLink" href={`/communities/${githubUser}/members`}>
+          Ver todos
+        </Link>
+      )}
     </ProfileRelationsBoxWrapper>
   )
 }

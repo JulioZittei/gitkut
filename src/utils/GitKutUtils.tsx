@@ -47,6 +47,59 @@ export async function getFollowing(githubUser: string, first?: number) {
   return data
 }
 
+export async function getCommunity(slug?: string) {
+  const data = await fetch(`https://graphql.datocms.com/`, {
+    method: "POST",
+    headers: {
+      Authorization: process.env.DATO_READ_ONLY_API_TOKEN,
+      "Content-Type": "aplication/json",
+      Accept: "aplication/json",
+    },
+    body: JSON.stringify({
+      query: `query {
+	
+        community
+        ${
+          slug
+            ? `(
+          ${
+            slug &&
+            `filter: {
+            slug: {eq: "${slug.toLowerCase()}"}
+          }`
+          }
+          
+        )`
+            : ``
+        }        
+        {
+          id
+          title
+          imageUrl
+          slug
+          _createdAt
+          category
+          communityType
+          language
+          location
+          members
+          creatorId
+        }
+      }`,
+    }),
+  }).then((response) => {
+    if (response.ok) {
+      return response.json()
+    }
+
+    console.log(`${response.status} ${response.statusText}`)
+    return {
+      statusError: response.status,
+    }
+  })
+  return data
+}
+
 export async function getCommunities(githubuser?: string, first?: number) {
   const data = await fetch(`https://graphql.datocms.com/`, {
     method: "POST",
@@ -83,7 +136,7 @@ export async function getCommunities(githubuser?: string, first?: number) {
           communityType
           language
           location
-          member
+          members
           creatorId
         }
         

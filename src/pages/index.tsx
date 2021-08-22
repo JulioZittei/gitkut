@@ -49,7 +49,12 @@ export default function HomePage({ data }) {
       communityType: "Pública",
       language: "Português",
       location: "Brasil",
-      member: JSON.stringify([userInfo.login.toLocaleLowerCase()]),
+      members: JSON.stringify([
+        {
+          userId: userInfo.login.toLocaleLowerCase(),
+          imageUrl: userInfo.avatar_url,
+        },
+      ]),
     }
 
     try {

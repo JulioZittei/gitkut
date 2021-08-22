@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import nookies from "nookies"
 import jwt from "jsonwebtoken"
-import { Link } from "../components/Link"
-import { GitkutMenu } from "../components/GitKutMenu"
-import { MainGrid } from "../components/MainGrid"
-import { Box } from "../components/Box"
-import { getCommunities, getUserInfo } from "../utils/GitKutUtils"
+import { Link } from "../../components/Link"
+import { GitkutMenu } from "../../components/GitKutMenu"
+import { MainGrid } from "../../components/MainGrid"
+import { Box } from "../../components/Box"
+import { getCommunities, getUserInfo } from "../../utils/GitKutUtils"
 import { GetServerSideProps, GetServerSidePropsContext } from "next"
-import { Post } from "../components/Post"
+import { Post } from "../../components/Post"
 import Head from "next/head"
-import { ProfileSidebar } from "../components/ProfileSidebar"
+import { ProfileSidebar } from "../../components/ProfileSidebar"
 
 export default function Communities({ data }) {
   const [communities, setCommunities] = useState(data.communities.data)
@@ -57,10 +57,6 @@ export default function Communities({ data }) {
             )}
           </Box>
         </div>
-        {/* <div
-          className="profileRelationsArea"
-          style={{ gridArea: "profileRelationsArea" }}
-        ></div> */}
       </MainGrid>
     </>
   )

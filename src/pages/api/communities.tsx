@@ -12,7 +12,7 @@ export default async function Communities(
     GET: methodNotAllowed,
     POST: createCommunity,
     PUT: updateCommunity,
-    DELETE: updateCommunity,
+    DELETE: deleteCommunity,
   }
   await tasks[req.method](req, res, client)
 }
@@ -38,7 +38,7 @@ async function createCommunity(
   const createdCommunity = await client.items.create({
     itemType: "1026835",
     slug: slugfy(community.title),
-    member: JSON.stringify([community.creatorId]),
+    members: JSON.stringify([community.creatorId]),
     ...community,
   })
 
@@ -51,11 +51,32 @@ async function updateCommunity(
   client: SiteClient
 ) {
   // Update Community
-  console.log("Update Community")
-  res.status(201).json({
-    statusCode: 201,
-    errorMessage: "Updated",
+  const user = req.body.user
+  const itemId = req.body.communityId
+
+  const community = await client.items.all({
+    filter: {
+      type: "community",
+      fields: {
+        id: { eq: itemId },
+      },
+    },
   })
+
+  const oldMembers = JSON.parse(community[0].members)
+  const members = [
+    ...oldMembers,
+    {
+      userId: user.login.toLowerCase(),
+      imageUrl: user.avatar_url,
+    },
+  ]
+
+  const updatedCommunity = await client.items.update(itemId, {
+    members: JSON.stringify(members),
+  })
+
+  res.status(201).json(JSON.stringify(updatedCommunity))
 }
 
 async function deleteCommunity(
@@ -64,9 +85,26 @@ async function deleteCommunity(
   client: SiteClient
 ) {
   // Update Community
-  console.log("Delete Community")
-  res.status(204).json({
-    statusCode: 204,
-    errorMessage: "No content",
+  const user = req.body.user
+  const itemId = req.body.communityId
+
+  const community = await client.items.all({
+    filter: {
+      type: "community",
+      fields: {
+        id: { eq: itemId },
+      },
+    },
   })
+
+  const oldMembers = JSON.parse(community[0].members)
+  const members = oldMembers.filter(
+    (member) => member.userId !== user.login.toLowerCase()
+  )
+
+  const updatedCommunity = await client.items.update(itemId, {
+    members: JSON.stringify(members),
+  })
+
+  res.status(204).json({})
 }
