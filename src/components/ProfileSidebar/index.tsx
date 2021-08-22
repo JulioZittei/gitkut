@@ -20,7 +20,12 @@ export function ProfileSidebar({ userInfo }: ProfileSidebarProps) {
       </Link>
       <hr />
 
-      <GitkutProfileSidebarMenuDefault />
+      <GitkutProfileSidebarMenuDefault
+        isCommunityInfo={false}
+        handleJoinCommunity={undefined}
+        isMember={undefined}
+        isLoading={undefined}
+      />
     </Box>
   )
 }
