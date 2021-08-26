@@ -109,7 +109,10 @@ export default function CommunityMembersPage({ data }) {
 
             <hr />
             <p>
-              <a className="boxLink community" href={`#`} target="_blank">
+              <a
+                className="boxLink community"
+                href={`/communities/${community.slug}`}
+              >
                 {community.title}
               </a>
             </p>

@@ -110,16 +110,17 @@ export async function getCommunities(githubuser?: string, first?: number) {
     },
     body: JSON.stringify({
       query: `query {
-	
+
         allCommunities
         ${
           githubuser || first
             ? `(
           ${
-            githubuser &&
-            `filter: {
+            githubuser
+              ? `filter: {
             creatorId: {eq: "${githubuser.toLowerCase()}"}
           }`
+              : ``
           }
           ${first && `first: ${first}`}
           
@@ -142,13 +143,14 @@ export async function getCommunities(githubuser?: string, first?: number) {
         
         _allCommunitiesMeta
         ${
-          githubuser || first
+          githubuser
             ? `(
           ${
-            githubuser &&
-            `filter: {
+            githubuser
+              ? `filter: {
             creatorId: {eq: "${githubuser.toLowerCase()}"}
           }`
+              : ``
           }
         )`
             : ``

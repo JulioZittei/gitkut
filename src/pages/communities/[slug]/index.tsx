@@ -106,7 +106,10 @@ export default function CommunityPage({ data }) {
 
             <hr />
             <p>
-              <a className="boxLink community" href={`#`} target="_blank">
+              <a
+                className="boxLink community"
+                href={`/communities/${community.slug}`}
+              >
                 {community.title}
               </a>
             </p>
@@ -167,7 +170,7 @@ export default function CommunityPage({ data }) {
             title="Membros"
             urlBase=""
             totalItems={community.members.length}
-            items={community.members.slice(0, 5)}
+            items={community.members.slice(0, 6)}
             props={{
               id: "userId",
               title: "userId",

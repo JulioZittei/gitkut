@@ -188,23 +188,32 @@ export const getServerSideProps: GetServerSideProps = async (
   const data = await Promise.all([
     getFollowers(githubUser, 6),
     getFollowing(githubUser, 6),
-    getCommunities(githubUser, 6),
+    getCommunities(),
     getPosts(githubUser),
     getUserInfo(githubUser),
   ]).then((results) => {
+    let fetchedData = []
+
     if (results[4]?.statusError) {
       return {
         statusError: results[4].statusError,
       }
     }
+
+    fetchedData = results[2].data.allCommunities.filter((community) => {
+      if (community.members.some((member) => member.userId === githubUser)) {
+        return community
+      }
+    })
+
     return {
       followers: results[0] || [],
       following: results[1] || [],
       communities: {
-        data: results[2].data.allCommunities || [],
-        count: results[2].data._allCommunitiesMeta.count,
+        data: fetchedData.slice(0, 6) || [],
+        count: fetchedData.length,
       },
-      posts: results[3].data.allPosts,
+      posts: results[3].data.allPosts || [],
       userInfo: results[4],
     }
   })
