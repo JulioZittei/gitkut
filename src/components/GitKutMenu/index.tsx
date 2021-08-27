@@ -190,6 +190,7 @@ function GitkutMenuProfileSidebar({ userInfo }) {
           handleJoinCommunity={undefined}
           isMember={undefined}
           isLoading={undefined}
+          userInfo={userInfo}
         />
       </div>
     </div>
@@ -204,32 +205,33 @@ export function GitkutProfileSidebarMenuDefault({
   handleJoinCommunity,
   isMember,
   isLoading,
+  userInfo,
 }) {
   return (
     <GitkutProfileSidebarMenuDefault.Wrapper>
       {!isCommunityInfo ? (
         <>
           <nav>
-            <a href={`/`}>
+            <a href={`/${userInfo?.login}`}>
               <img src="/icons/user.svg" />
               Perfil
             </a>
-            <a href="/">
+            <a href={`/${userInfo?.login}`}>
               <img src="/icons/book.svg" />
               Posts
             </a>
-            <a href="/">
+            <a href={`/${userInfo?.login}`}>
               <img src="/icons/camera.svg" />
               Fotos
             </a>
-            <a href="/">
+            <a href={`/${userInfo?.login}`}>
               <img src="/icons/sun.svg" />
               Depoimentos
             </a>
           </nav>
           <hr />
           <nav>
-            <a href="/">
+            <a href={`https://github.com/${userInfo?.login}`}>
               <img src="/icons/plus.svg" />
               GitHub Trends
             </a>

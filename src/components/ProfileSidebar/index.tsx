@@ -15,7 +15,7 @@ export function ProfileSidebar({ userInfo }: ProfileSidebarProps) {
         style={{ borderRadius: "8px" }}
       />
       <hr />
-      <Link className="boxLink" href={`/usuarios/${userInfo?.login}`}>
+      <Link className="boxLink" href={`/${userInfo?.login}`}>
         {userInfo?.name}
       </Link>
       <hr />
@@ -25,6 +25,7 @@ export function ProfileSidebar({ userInfo }: ProfileSidebarProps) {
         handleJoinCommunity={undefined}
         isMember={undefined}
         isLoading={undefined}
+        userInfo={userInfo}
       />
     </Box>
   )
