@@ -25,7 +25,7 @@ export default function UserCommunitiesPage({ data }) {
   return (
     <>
       <Head>
-        <title>Comunidades</title>
+        <title>Comunidades de {data.userInfo.name}</title>
       </Head>
       <GitkutMenu userInfo={data.userInfo} />
       <MainGrid theme={theme}>
@@ -35,9 +35,7 @@ export default function UserCommunitiesPage({ data }) {
 
         <div className="welcomeArea">
           <Box>
-            <h1 className="title subPageTitle">
-              Comunidades de {data.userInfo.name}
-            </h1>
+            <h1 className="title subPageTitle">Comunidades</h1>
             <p className="pathSubtitle">
               Início &#62; {data.userInfo.name} &#62; <span>Comunidades</span>
             </p>
