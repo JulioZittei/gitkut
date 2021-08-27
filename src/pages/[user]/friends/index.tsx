@@ -1,18 +1,22 @@
 import React, { useState } from "react"
 import nookies from "nookies"
 import jwt from "jsonwebtoken"
-import { Link } from "../../components/Link"
-import { GitkutMenu } from "../../components/GitKutMenu"
-import { MainGrid } from "../../components/MainGrid"
-import { Box } from "../../components/Box"
-import { getCommunities, getUserInfo } from "../../utils/GitKutUtils"
+import { Link } from "../../../components/Link"
+import { GitkutMenu } from "../../../components/GitKutMenu"
+import { MainGrid } from "../../../components/MainGrid"
+import { Box } from "../../../components/Box"
+import {
+  getfollowers,
+  getFollowers,
+  getUserInfo,
+} from "../../../utils/GitKutUtils"
 import { GetServerSideProps, GetServerSidePropsContext } from "next"
-import { Post } from "../../components/Post"
+import { Post } from "../../../components/Post"
 import Head from "next/head"
-import { ProfileSidebar } from "../../components/ProfileSidebar"
+import { ProfileSidebar } from "../../../components/ProfileSidebar"
 
-export default function CommunitiesPage({ data }) {
-  const [communities, setCommunities] = useState(data.communities.data)
+export default function UserFriends({ data }) {
+  const [followers, setFollowers] = useState(data.followers)
 
   const theme = {
     grid: 2,
@@ -21,7 +25,7 @@ export default function CommunitiesPage({ data }) {
   return (
     <>
       <Head>
-        <title>Comunidades</title>
+        <title>Amigos de {data.userInfo.name}</title>
       </Head>
       <GitkutMenu userInfo={data.userInfo} />
       <MainGrid theme={theme}>
@@ -31,24 +35,24 @@ export default function CommunitiesPage({ data }) {
 
         <div className="welcomeArea">
           <Box>
-            <h1 className="title subPageTitle">Comunidades</h1>
+            <h1 className="title subPageTitle">Amigos</h1>
             <p className="pathSubtitle">
-              Início &#62; <span>Comunidades</span>
+              Início &#62; <span>Amigos</span>
             </p>
             <hr />
-            {communities.length < 1 ? (
-              <span className="noScrap">Não há comunidades criadas</span>
+            {followers.length < 1 ? (
+              <span className="noScrap">Você ainda não possui amigos!</span>
             ) : (
               <ul>
-                {communities.map((community) => {
+                {followers.map((follower) => {
                   return (
-                    <Post key={community.id}>
-                      <Link href={`/communities/${community.slug}`}>
-                        <img src={community.imageUrl} />
+                    <Post key={follower.id}>
+                      <Link href={`/${follower.login}`}>
+                        <img src={follower.avatar_url} />
                       </Link>
                       <div>
-                        <span>{community.title}</span>
-                        <p>Criador: {community.creatorId}</p>
+                        <span>{follower.login}</span>
+                        <p>{follower?.name}</p>
                       </div>
                     </Post>
                   )
@@ -67,8 +71,7 @@ export const getServerSideProps: GetServerSideProps = async (
 ) => {
   const cookies = nookies.get(context)
   const token = cookies.USER_TOKEN
-  const decodedToken = jwt.decode(token)
-  const githubUser = decodedToken?.githubUser
+  const githubUser = (context.query.user as string).toLocaleLowerCase()
 
   /* Api broken, the response is always true, even when the user does not exist */
 
@@ -91,17 +94,36 @@ export const getServerSideProps: GetServerSideProps = async (
   }
 
   const data = await Promise.all([
-    getCommunities(),
+    getFollowers(githubUser),
     getUserInfo(githubUser),
   ]).then((results) => {
+    if (results[1]?.statusError) {
+      return {
+        statusError: results[1].statusError,
+      }
+    }
+
     return {
-      communities: {
-        data: results[0].data.allCommunities || [],
-        count: results[0].data._allCommunitiesMeta.count,
-      },
+      followers: results[0],
       userInfo: results[1],
     }
   })
+
+  if (data?.statusError === 404) {
+    return {
+      redirect: {
+        destination: "/login?userDoesNotExists",
+        permanent: false,
+      },
+    }
+  } else if (data?.statusError === 403) {
+    return {
+      redirect: {
+        destination: "/login?rateLimit",
+        permanent: false,
+      },
+    }
+  }
 
   return {
     props: { data }, // will be passed to the page component as props
