@@ -5,11 +5,7 @@ import { Link } from "../../../components/Link"
 import { GitkutMenu } from "../../../components/GitKutMenu"
 import { MainGrid } from "../../../components/MainGrid"
 import { Box } from "../../../components/Box"
-import {
-  getfollowers,
-  getFollowers,
-  getUserInfo,
-} from "../../../utils/GitKutUtils"
+import { getFollowers, getUserInfo } from "../../../utils/GitKutUtils"
 import { GetServerSideProps, GetServerSidePropsContext } from "next"
 import { Post } from "../../../components/Post"
 import Head from "next/head"
