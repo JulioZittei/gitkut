@@ -120,6 +120,7 @@ export default function CommunityPage({ data }) {
               isCommunityInfo={true}
               isMember={isMember}
               isLoading={isLoading}
+              userInfo={data.userInfo}
             />
           </Box>
         </div>
