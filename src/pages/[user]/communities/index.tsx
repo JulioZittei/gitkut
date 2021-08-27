@@ -15,7 +15,7 @@ import { Post } from "../../../components/Post"
 import Head from "next/head"
 import { ProfileSidebar } from "../../../components/ProfileSidebar"
 
-export default function UserCommunities({ data }) {
+export default function UserCommunitiesPage({ data }) {
   const [communities, setCommunities] = useState(data.communities.data)
 
   const theme = {
@@ -37,7 +37,7 @@ export default function UserCommunities({ data }) {
           <Box>
             <h1 className="title subPageTitle">Comunidades</h1>
             <p className="pathSubtitle">
-              Início &#62; <span>Comunidades</span>
+              Início &#62; {data.userInfo.name} &#62; <span>Comunidades</span>
             </p>
             <hr />
             {communities.length < 1 ? (

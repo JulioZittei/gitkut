@@ -11,7 +11,7 @@ import { Post } from "../../../components/Post"
 import Head from "next/head"
 import { ProfileSidebar } from "../../../components/ProfileSidebar"
 
-export default function UserFriends({ data }) {
+export default function UserFriendsPage({ data }) {
   const [followers, setFollowers] = useState(data.followers)
 
   const theme = {
@@ -33,7 +33,7 @@ export default function UserFriends({ data }) {
           <Box>
             <h1 className="title subPageTitle">Amigos</h1>
             <p className="pathSubtitle">
-              Início &#62; <span>Amigos</span>
+              Início &#62; {data.userInfo.name} &#62; <span>Amigos</span>
             </p>
             <hr />
             {followers.length < 1 ? (
