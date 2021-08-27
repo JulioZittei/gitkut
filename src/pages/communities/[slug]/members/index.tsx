@@ -123,6 +123,7 @@ export default function CommunityMembersPage({ data }) {
               isCommunityInfo={true}
               isMember={isMember}
               isLoading={isLoading}
+              userInfo={data.userInfo}
             />
           </Box>
         </div>
