@@ -21,7 +21,7 @@ export default function UserFollowingPage({ data }) {
   return (
     <>
       <Head>
-        <title>Seguidores de {data.userInfo.name}</title>
+        <title>Seguindo de {data.userInfo.name}</title>
       </Head>
       <GitkutMenu userInfo={data.userInfo} />
       <MainGrid theme={theme}>
