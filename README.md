@@ -1,84 +1,152 @@
-# Example app with styled-components
+<h1 align="center">
+  <img alt="Logo" title="Pomo.up" src=".github/logo.png" width="220px" />
+</h1>
+<br>
+<br>
+<p align="center">
+  <img alt="Login" src=".github/gitkut.png" width="100%">
+</p>
+<br>
 
-This example features how you use a different styling solution than [styled-jsx](https://github.com/vercel/styled-jsx) that also supports universal styles. That means we can serve the required styles for the first render within the HTML and then load the rest in the client. In this case we are using [styled-components](https://github.com/styled-components/styled-components).
+## About the project 💬
 
-For this purpose we are extending the `<Document />` and injecting the server side rendered styles into the `<head>`, and also adding the `babel-plugin-styled-components` (which is required for server side rendering). Additionally we set up a global [theme](https://www.styled-components.com/docs/advanced#theming) for styled-components using NextJS custom [`<App>`](https://nextjs.org/docs/advanced-features/custom-app) component.
+The **GitKut** is a web application clone of our dearly departed Orkut, but with a more modern interface and using the best development technologies!
 
-## Preview
+## Pages 🔖
 
-Preview the example live on [StackBlitz](http://stackblitz.com/):
+- [Login](#login-page)
+- [Profile](#profile-page)
+- [Friends](#friends-page)
+- [Followers](#followers-page)
+- [Following](#following-page)
+- [Friend's profile](#friend-profile-page)
+- [Communities](#communities-page)
+- [Community](#community-page)
+- [Community members](#community-members-page)
+- [Logout](#logout-page)
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/vercel/next.js/tree/canary/examples/with-styled-components)
+## Features 🧠
 
-## Deploy your own
+The application contains the following features:
 
-Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example):
+### Login page
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-styled-components&project-name=with-styled-components&repository-name=with-styled-components)
+- Log in with the GitHub username.
 
-## How to use
+<p align="center">
+  <img alt="Login" src=".github/login.png" width="100%">
+</p>
 
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init) or [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/) to bootstrap the example:
+### Profile page
 
-```bash
-npx create-next-app --example with-styled-components with-styled-components-app
-# or
-yarn create next-app --example with-styled-components with-styled-components-app
-```
+- View friends (GitHub followers and following);
+- Go to friends' profiles;
+- View communities that you are member;
+- Go to the community page;
+- Create a new community;
+- See the recent messages;
+- Leave new messages;
+- Logout.
 
-Deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
+<p align="center">
+  <img alt="Profile" src=".github/profile.png" width="100%">
+</p>
 
-### Try it on CodeSandbox
+### Friends page
 
-[Open this example on CodeSandbox](https://codesandbox.io/s/github/vercel/next.js/tree/canary/examples/with-styled-components)
+- See all your friends (GitHub followers);
+- Click on a friend to go to their profile;
+- Click on the link below the username to go to their GitHub profile.
 
-### Notes
+<p align="center">
+  <img alt="Friends" src=".github/friends.png" width="100%">
+</p>
 
-When wrapping a [Link](https://nextjs.org/docs/api-reference/next/link) from `next/link` within a styled-component, the [as](https://styled-components.com/docs/api#as-polymorphic-prop) prop provided by `styled` will collide with the Link's `as` prop and cause styled-components to throw an `Invalid tag` error. To avoid this, you can either use the recommended [forwardedAs](https://styled-components.com/docs/api#forwardedas-prop) prop from styled-components or use a different named prop to pass to a `styled` Link.
+### Followers page
 
-<details>
-<summary>Click to expand workaround example</summary>
-<br />
+- See all your followers (GitHub followers);
+- Click on a friend to go to their profile;
+- Click on the link below the username to go to their GitHub profile.
 
-**components/StyledLink.js**
+<p align="center">
+  <img alt="Followers" src=".github/followers.png" width="100%">
+</p>
 
-```javascript
-import Link from 'next/link'
-import styled from 'styled-components'
+### Following page
 
-const StyledLink = ({ as, children, className, href }) => (
-  <Link href={href} as={as} passHref>
-    <a className={className}>{children}</a>
-  </Link>
-)
+- See all your following (GitHub following);
+- Click on a friend to go to their profile;
+- Click on the link below the username to go to their GitHub profile.
 
-export default styled(StyledLink)`
-  color: #0075e0;
-  text-decoration: none;
-  transition: all 0.2s ease-in-out;
+<p align="center">
+  <img alt="Following" src=".github/following.png" width="100%">
+</p>
 
-  &:hover {
-    color: #40a9ff;
-  }
+### Friend's profile page
 
-  &:focus {
-    color: #40a9ff;
-    outline: none;
-    border: 0;
-  }
-`
-```
+- View the friend's information, including their friends (GitHub followers and following).
+- See the friend's friends.
 
-**pages/index.js**
+<p align="center">
+  <img alt="Friend's profile" src=".github/friend-profile.png" width="100%">
+</p>
 
-```javascript
-import StyledLink from '../components/StyledLink'
+### Communities page
 
-export default () => (
-  <StyledLink href="/post/[pid]" forwardedAs="/post/abc">
-    First post
-  </StyledLink>
-)
-```
+- View all created communities;
+- Click on a community to go to its page.
 
-</details>
+<p align="center">
+  <img alt="Communities" src=".github/communities.png" width="100%">
+</p>
+
+### Community page
+
+- View community information;
+- Participate in the community.
+
+<p align="center">
+  <img alt="Community" src=".github/community.png" width="100%">
+</p>
+
+### Community's members page
+
+- See all community members.
+
+<p align="center">
+  <img alt="Community's members" src=".github/community-members.png" width="100%">
+</p>
+
+## How to use? 📌
+
+_To use **Gitkut**, just access it directly in your browser! [Click here](https://gitkut.vercel.app)_
+
+<!-- To use the application on your machine you need to have the following software installed:
+
+- [Node.js](https://nodejs.org/pt-br/)
+
+With the above software installed, simply follow the following steps to run the application on your machine:
+
+1. **Clone the project** <br>
+   Open the terminal in a folder of your choice and paste the following code:
+
+   _`git clone https://github.com/JulioZittei/gitkut.git`_
+
+2. **Install the dependencies** <br>
+   Inside the project directory, open the terminal and paste the code:
+
+   _`npm install`_ or _`yarn`_
+
+_Or access **Gitkut** in your browser! [Click here](https://gitkut.vercel.app)_ -->
+
+## Technologies 🛠
+
+Developed using the following technologies:
+
+- [React](https://reactjs.org)
+- [Next.js](https://nextjs.org/)
+- [DatoCMS](https://www.datocms.com/)
+
+---
+
+<p align="center">Made with ❤ by: Julio Zittei </p>
