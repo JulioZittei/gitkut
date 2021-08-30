@@ -148,6 +148,13 @@ export default function CommunityMembersPage({ data }) {
                       </Link>
                       <div>
                         <span>{member.userId}</span>
+                        <Link
+                          href={`https://github.com/${member.userId}`}
+                          className="githubLink"
+                          target="_blank"
+                        >
+                          <p>{`https://github.com/${member.userId}`}</p>
+                        </Link>
                       </div>
                     </Post>
                   )

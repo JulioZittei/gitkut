@@ -48,7 +48,13 @@ export default function UserFollowersPage({ data }) {
                       </Link>
                       <div>
                         <span>{follower.login}</span>
-                        <p>{follower?.name}</p>
+                        <Link
+                          href={`${follower.html_url}`}
+                          className="githubLink"
+                          target="_blank"
+                        >
+                          <p>{follower.html_url}</p>
+                        </Link>
                       </div>
                     </Post>
                   )

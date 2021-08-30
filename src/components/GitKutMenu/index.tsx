@@ -36,7 +36,7 @@ export function GitkutMenu({ userInfo }) {
         </nav>
 
         <nav>
-          <a href={`/logout`}>Sair</a>
+          <Link href={`/logout`}>Sair</Link>
           <div>
             <input placeholder="Pesquisar no Gitkut" />
           </div>
@@ -179,9 +179,9 @@ function GitkutMenuProfileSidebar({ userInfo }) {
         />
         <hr />
         <p>
-          <a className="boxLink" href={`/user/${userInfo.login}`}>
+          <Link className="boxLink" href={`/user/${userInfo.login}`}>
             @{userInfo.login}
-          </a>
+          </Link>
         </p>
         <hr />
 
@@ -212,33 +212,33 @@ export function GitkutProfileSidebarMenuDefault({
       {!isCommunityInfo ? (
         <>
           <nav>
-            <a href={`/${userInfo?.login}`}>
+            <Link href={`/${userInfo?.login}`}>
               <img src="/icons/user.svg" />
               Perfil
-            </a>
-            <a href={`/${userInfo?.login}`}>
+            </Link>
+            <Link href={`/${userInfo?.login}`}>
               <img src="/icons/book.svg" />
               Posts
-            </a>
-            <a href={`/${userInfo?.login}`}>
+            </Link>
+            <Link href={`/${userInfo?.login}`}>
               <img src="/icons/camera.svg" />
               Fotos
-            </a>
-            <a href={`/${userInfo?.login}`}>
+            </Link>
+            <Link href={`/${userInfo?.login}`}>
               <img src="/icons/sun.svg" />
               Depoimentos
-            </a>
+            </Link>
           </nav>
           <hr />
           <nav>
-            <a href={`https://github.com/${userInfo?.login}`}>
+            <Link href={`${userInfo?.html_url}`} target="_blank">
               <img src="/icons/plus.svg" />
               GitHub Trends
-            </a>
-            <a href="/logout">
+            </Link>
+            <Link href="/logout">
               <img src="/icons/logout.svg" />
               Sair
-            </a>
+            </Link>
           </nav>
         </>
       ) : (
