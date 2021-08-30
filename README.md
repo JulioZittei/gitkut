@@ -22,7 +22,7 @@ The **GitKut** is a web application clone of our dearly departed Orkut, but with
 - [Friend's profile](#friend-profile-page)
 - [Communities](#communities-page)
 - [Community](#community-page)
-- [Community members](#community-members-page)
+- [Community's members](#community-members-page)
 - [Logout](#logout-page)
 
 ## Features 🧠
@@ -115,6 +115,14 @@ The application contains the following features:
 
 <p align="center">
   <img alt="Community's members" src=".github/community-members.png" width="100%">
+</p>
+
+### Logout page
+
+- Exit the application.
+
+<p align="center">
+  <img alt="Logout" src=".github/logout.png" width="100%">
 </p>
 
 ## How to use? 📌
