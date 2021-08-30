@@ -157,4 +157,4 @@ Developed using the following technologies:
 
 ---
 
-<p align="center">Made with ❤ by: Julio Zittei </p>
+<p align="center">Made with ❤️</p><p align="center">Julio Zittei</span> </p>
